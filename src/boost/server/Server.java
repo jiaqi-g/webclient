@@ -37,7 +37,7 @@ public class Server {
 			String query = (String) params.get("content");
 			String res = null;
 			try {
-				res = PageHelper.makeTable(JdbcClient.executeSQL(query));
+				res = PageHelper.makeTable(new JdbcClient().executeSQL(query));
 			}
 			catch (SQLException e) {
 				res = "SQL execution error! \n" + e.getMessage();

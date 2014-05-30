@@ -6,16 +6,21 @@ import fi.iki.elonen.ServerRunner;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.FileNameMap;
 import java.net.URLConnection;
-import java.util.Map;
-import java.util.Map.Entry;
 
+import boost.jdbc.JdbcClient;
 import boost.jdbc.Log;
+import boost.server.PageHelper;
 
 public class SimpleServer extends NanoHTTPD {
+	
+	/**
+	 * notice: we should put absolute address of website in the root index.html file
+	 */
+	private static String defaultURI = "/index.html";
+	//private static String debugQuery = "select * from lineitem limit 10";
 	
 	public SimpleServer() {
 		super(8080);
@@ -25,12 +30,12 @@ public class SimpleServer extends NanoHTTPD {
 	public Response serve(IHTTPSession session) {
 		String uri = session.getUri();
 		//Method method = session.getMethod();
-		Map<String, String> header = session.getHeaders();
+//		Map<String, String> header = session.getHeaders();
 		
 		//Log.d(TAG,"SERVE ::  URI "+uri);
-		final StringBuilder buf = new StringBuilder();
-		for (Entry<String, String> kv : header.entrySet())
-			buf.append(kv.getKey() + " : " + kv.getValue() + "\n");
+//		final StringBuilder buf = new StringBuilder();
+//		for (Entry<String, String> kv : header.entrySet())
+//			buf.append(kv.getKey() + " : " + kv.getValue() + "\n");
 		
 		InputStream mbuffer = null;
 		try {
@@ -52,12 +57,30 @@ public class SimpleServer extends NanoHTTPD {
 				} else if (uri.contains(".htm") || uri.contains(".html")) {
 					mbuffer = Asset.open(uri.substring(1));
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
+				} else if (uri.equals("/search")) {
+					String query = session.getParms().get("query").trim();
+					// TODO: query should contain limit in order to be executed now
+					if (!query.contains("limit")) {
+						Log.log("should contain limit else won't be executed");
+						return null;
+					}
+					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makeTable(new JdbcClient().executeSQL(query)));
+				} else if (uri.equals("/plan")) {
+					String query = session.getParms().get("query").trim();
+					// TODO: query should start with select
+					if (!query.startsWith("select")) {
+						return null;
+					}
+					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makePlan(new JdbcClient().executeSQL("explain " + query)));
 				} else {
-					Log.log("Opening file "+ uri.substring(1));
+					//Log.log("Opening file "+ uri.substring(1));
+					Log.log("Can not find MIME type for " + uri.substring(1) + " open default page");
+					
+					uri = defaultURI;
 					File request = new File(uri.substring(1));
 					mbuffer = new FileInputStream(request);
 					FileNameMap fileNameMap = URLConnection.getFileNameMap();
-					String mimeType = fileNameMap.getContentTypeFor(uri);
+					String mimeType = fileNameMap.getContentTypeFor(uri.substring(1));
 
 					Response streamResponse = new Response(Status.OK, mimeType, mbuffer);
 					//Random rnd = new Random();
@@ -67,9 +90,7 @@ public class SimpleServer extends NanoHTTPD {
 					return streamResponse;
 				}
 			}
-		} catch (IOException e) {
-			//Log.d(TAG,"Error opening file"+uri.substring(1));
-			Log.log("Error opening file "+ uri.substring(1));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -77,6 +98,7 @@ public class SimpleServer extends NanoHTTPD {
 	}
 
 	public static void main(String[] args) {
+		JdbcClient.load();
 		ServerRunner.run(SimpleServer.class);
 	}
 }

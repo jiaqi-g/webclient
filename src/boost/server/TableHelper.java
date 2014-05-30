@@ -29,13 +29,15 @@ public class TableHelper {
 		sb.append("<tr>\n");
 		if (isHead) {
 			makeTh("#");
+			for (Object obj: row) {
+				makeTh(obj);
+			}
 		} else {
 			makeTd(index);
-		}
-		
-		for (Object obj: row) {
-			makeTd(obj);
-		}
+			for (Object obj: row) {
+				makeTd(obj);
+			}
+		}		
 		sb.append("</tr>\n");
 	}
 	

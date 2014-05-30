@@ -58,6 +58,15 @@ public class PageHelper {
 		return html;
 	}
 	
+	public static String makePlan(ResultSet rs) throws SQLException {
+		StringBuilder res = new StringBuilder();
+		while (rs.next()) {
+			res.append(rs.getObject(1));
+			res.append("<br />");
+		}
+		return res.toString();
+	}
+	
 	public static String makeTable(ResultSet rs) throws SQLException {
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
