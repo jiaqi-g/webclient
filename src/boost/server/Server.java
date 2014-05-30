@@ -8,11 +8,7 @@ import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.apache.hadoop.hive.ql.parse.SemanticException;
-import org.apache.hadoop.record.compiler.generated.ParseException;
-
 import boost.jdbc.JdbcClient;
-import boost.jdbc.Log;
 
 import com.sun.net.httpserver.*;
 
@@ -35,12 +31,13 @@ public class Server {
 	}
 	
 	static class SearchHandler implements HttpHandler {
+		@SuppressWarnings("unchecked")
 		public void handle(HttpExchange t) throws IOException {
 			Map<String, Object> params = (Map<String, Object>) t.getAttribute("parameters");
 			String query = (String) params.get("content");
 			String res = null;
 			try {
-				res = JdbcClient.getPrettyResult(JdbcClient.executeSQL(query));
+				res = PageHelper.makeTable(JdbcClient.executeSQL(query));
 			}
 			catch (SQLException e) {
 				res = "SQL execution error! \n" + e.getMessage();

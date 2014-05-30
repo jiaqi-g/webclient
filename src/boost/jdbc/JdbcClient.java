@@ -37,11 +37,13 @@ public class JdbcClient {
 		//return null;
 	}
 	
-	public static String getPrettyResult(ResultSet rs) throws SQLException {
+	private static String getPrettyResult(ResultSet rs) throws SQLException {
 		StringBuilder res = new StringBuilder();
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
-		res.append("Result: \n");
+		res.append("**Result:**\n");
+		
+		int index = 0;
 		while (rs.next()) {
 			//column count starts from 1
 			for (int i=1; i<=columnCount; i++) {
@@ -55,7 +57,9 @@ public class JdbcClient {
 				res.append(", ");
 			}
 			res.append("\n");
+			index += 1;
 		}
+		Log.log("result length: " + index);
 		return res.toString();
 	}
 	
