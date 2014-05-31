@@ -1,4 +1,0 @@
-1,good
-2,bad
-3,excellent
-4,well
