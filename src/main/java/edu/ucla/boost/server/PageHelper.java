@@ -8,7 +8,11 @@ import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
 
+import edu.ucla.boost.Confidence;
 import edu.ucla.boost.Log;
+import edu.ucla.boost.Param;
+import edu.ucla.boost.Quantile;
+import edu.ucla.boost.http.ParamUtil;
 
 public class PageHelper {
 	
@@ -68,13 +72,33 @@ public class PageHelper {
 		return res.toString();
 	}
 	
-	public static String makeTable(ResultSet rs) throws SQLException {
+	public static String makeTable(ResultSet rs, ParamUtil params) throws SQLException {
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
 		
 		List<Object> head = new ArrayList<Object>();
 		for (int i=1; i<=columnCount; i++) {
 			head.add(rs.getMetaData().getColumnName(i));
+		}
+		
+		boolean doVariance = params.doVariance();
+		boolean doExist = params.doExist();
+		boolean doQuantile = params.doQuantile();
+		boolean doConfidence = params.doConfidence();
+		Quantile quantile = params.getQuantile();
+		Confidence confidence = params.getConfidence();
+		
+		if (doVariance) {
+			head.add(Param.VARIANCE_COLUMN_NAME);
+		}
+		if (doExist) {
+			head.add(Param.EXIST_COLUMN_NAME);
+		}
+		if (doQuantile) {
+			head.add(Param.QUANTILE_COLUMN_NAME + "_" + quantile.getQuantile() + "%");
+		}
+		if (doConfidence) {
+			head.add(Param.CONFIDENCE_COLUMN_NAME + "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)");
 		}
 		
 		List<List<Object>> body = new ArrayList<List<Object>>();
@@ -90,6 +114,21 @@ public class PageHelper {
 					row.add("null");
 				}
 			}
+			
+			//TODO: do not need this in really
+			if (doVariance) {
+				row.add("");
+			}
+			if (doExist) {
+				row.add("");
+			}
+			if (doQuantile) {
+				row.add("");
+			}
+			if (doConfidence) {
+				row.add("");
+			}
+			
 			body.add(row);
 		}
 		

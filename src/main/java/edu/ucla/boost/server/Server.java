@@ -21,7 +21,9 @@ public class Server extends NanoHTTPD {
 	
 	@Override
 	public Response serve(IHTTPSession session) {
+		
 		String uri = session.getUri();
+		ParamUtil params = new ParamUtil(session.getParms());
 		//Method method = session.getMethod();
 //		Map<String, String> header = session.getHeaders();
 		
@@ -51,13 +53,13 @@ public class Server extends NanoHTTPD {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				} else if (uri.equals("/search")) {
-					String query = ParamUtil.getSelectQueryString(session.getParms());
+					String query = params.getSelectQueryString();
 					if (query == null) {
 						return null;
 					}
-					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makeTable(new JdbcClient().executeSQL(query)));
+					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makeTable(new JdbcClient().executeSQL(query), params));
 				} else if (uri.equals("/plan")) {
-					String query = ParamUtil.getExplainQueryString(session.getParms());
+					String query = params.getExplainQueryString();
 					if (query == null) {
 						return null;
 					}
