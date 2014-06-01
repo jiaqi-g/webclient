@@ -1,86 +1,84 @@
 package edu.ucla.boost.server;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
-import java.nio.ByteBuffer;
-import java.sql.SQLException;
-import java.util.Map;
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
+import fi.iki.elonen.ServerRunner;
 
+import java.io.InputStream;
+
+import edu.ucla.boost.Log;
+import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.jdbc.JdbcClient;
+import edu.ucla.boost.web.Asset;
+import edu.ucla.boost.web.Type;
 
-import com.sun.net.httpserver.*;
-
-public class Server {
-
-	public static void main(String[] args) throws Exception {
-		JdbcClient.load();
+public class Server extends NanoHTTPD {
+	//private static String debugQuery = "select * from lineitem limit 10";
+	
+	public Server() {
+		super(8080);
+	}
+	
+	@Override
+	public Response serve(IHTTPSession session) {
+		String uri = session.getUri();
+		//Method method = session.getMethod();
+//		Map<String, String> header = session.getHeaders();
 		
-		HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-		//server.createContext("/stackoverflow", new MyHandler());
-		HttpContext context = server.createContext("/search", new SearchHandler());
-
-		server.createContext("/", new MyHandler());
-		server.setExecutor(null); // creates a default executor
-
-		context.getFilters().add(new ParameterFilter());
-
-		System.out.println("Server starts ... ");
-		server.start();
-	}
-	
-	static class SearchHandler implements HttpHandler {
-		@SuppressWarnings("unchecked")
-		public void handle(HttpExchange t) throws IOException {
-			Map<String, Object> params = (Map<String, Object>) t.getAttribute("parameters");
-			String query = (String) params.get("content");
-			String res = null;
-			try {
-				res = PageHelper.makeTable(new JdbcClient().executeSQL(query));
+		//Log.d(TAG,"SERVE ::  URI "+uri);
+//		final StringBuilder buf = new StringBuilder();
+//		for (Entry<String, String> kv : header.entrySet())
+//			buf.append(kv.getKey() + " : " + kv.getValue() + "\n");
+		
+		InputStream mbuffer = null;
+		try {
+			if (uri != null) {
+				if (uri.contains("favicon")) return null;
+				
+				if (uri.contains(".js")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_JS, mbuffer);
+				} else if (uri.contains(".css")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_CSS, mbuffer);
+				} else if (uri.contains(".png")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_PNG, mbuffer); 
+				} else if (uri.contains(".txt")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
+				} else if (uri.contains(".htm") || uri.contains(".html")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
+				} else if (uri.equals("/search")) {
+					String query = ParamUtil.getSelectQueryString(session.getParms());
+					if (query == null) {
+						return null;
+					}
+					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makeTable(new JdbcClient().executeSQL(query)));
+				} else if (uri.equals("/plan")) {
+					String query = ParamUtil.getExplainQueryString(session.getParms());
+					if (query == null) {
+						return null;
+					}
+					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makePlan(new JdbcClient().executeSQL(query)));
+				} else {
+					//Log.log("Opening file "+ uri.substring(1));
+					Log.log("Can not find MIME type for " + uri + ", open default page.");
+					
+					mbuffer = Asset.openDefault();
+					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
+				}
 			}
-			catch (SQLException e) {
-				res = "SQL execution error! \n" + e.getMessage();
-				e.printStackTrace();
-			}
-			
-			//encode to utf-8 to avoid errors
-			ByteBuffer rs = Charset.forName("UTF-8").encode(PageHelper.makeOutlinePage(res));
-			//String response = rs.toString();
-			//System.out.println(response);
-			
-			t.sendResponseHeaders(200, rs.capacity());
-			OutputStream os = t.getResponseBody();
-			os.write(rs.array());
-			os.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-	}
-	
-	static class DefaultHandler implements HttpHandler {
-		public void handle(HttpExchange t) throws IOException {
-			String response = PageHelper.getDefaultPage("Default page");
-			//response = new ucla.stackoverflow.Main().test();
-
-			t.sendResponseHeaders(200, response.length());
-			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
-			os.close();
-		}
+		
+		return null;
 	}
 
-	static class MyHandler implements HttpHandler {
-		public void handle(HttpExchange t) throws IOException {
-			String content = "<form name=\"input\" action=\"search\" method=\"get\">"
-					+ "Content: <input type=\"text\" name=\"content\">"
-					+ "<input type=\"submit\" value=\"Submit\" />"
-					+ "</form></body></html>";
-			String response = PageHelper.getDefaultPage(content);
-
-			t.sendResponseHeaders(200, response.length());
-			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
-			os.close();
-		}
+	public static void main(String[] args) {
+		JdbcClient.load();
+		ServerRunner.run(Server.class);
 	}
-
 }

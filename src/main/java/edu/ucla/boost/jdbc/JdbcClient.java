@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.DriverManager;
 
+import edu.ucla.boost.Conf;
+import edu.ucla.boost.Log;
+
 public class JdbcClient {
 
 	String s = "load data local inpath '/home/victor/emp_data.txt' into table test";

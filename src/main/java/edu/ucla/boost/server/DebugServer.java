@@ -1,4 +1,4 @@
-package edu.ucla.boost.web;
+package edu.ucla.boost.server;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.ServerRunner;

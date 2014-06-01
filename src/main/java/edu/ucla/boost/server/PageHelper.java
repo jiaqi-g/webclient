@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
 
-import edu.ucla.boost.jdbc.Log;
+import edu.ucla.boost.Log;
 
 public class PageHelper {
 	

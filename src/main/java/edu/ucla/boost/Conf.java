@@ -1,4 +1,4 @@
-package edu.ucla.boost.jdbc;
+package edu.ucla.boost;
 
 public class Conf {
 	static boolean debug = true;
