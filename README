@@ -1,0 +1,6 @@
+The Http Server for communication of user to boost system.
+
+After clone, first run ./publish.sh to publish jars that can not be found in central repo.
+
+Then
+	mvn clean package
