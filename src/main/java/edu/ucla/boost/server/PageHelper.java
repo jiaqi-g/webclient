@@ -73,6 +73,10 @@ public class PageHelper {
 	}
 	
 	public static String makeTable(ResultSet rs, ParamUtil params) throws SQLException {
+		if (rs == null) {
+			return "";
+		}
+		
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
 		

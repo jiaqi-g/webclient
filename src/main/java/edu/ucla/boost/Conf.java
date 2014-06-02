@@ -2,17 +2,20 @@ package edu.ucla.boost;
 
 public class Conf {
 	static boolean debug = true;
-	static boolean sharkMode = false;
+	static boolean sharkMode = true;
 	
-	static int sharkPort = 4588;
+	//static String serverName = "wise-u10.cs.ucla.edu";
+	static String serverName = "localhost";
+	
+	static int sharkPort = 10000;
 	static int hivePort = 10000;
 	
-	public static int getPort() {
+	public static String getConnectionAddress() {
 		if (sharkMode) {
-			return sharkPort;
+			return "jdbc:hive://" + serverName + ":" + sharkPort + "/default";
 		}
 		else {
-			return hivePort;
+			return "jdbc:hive://" + serverName + ":" + hivePort + "/default";
 		}
 	}
 }

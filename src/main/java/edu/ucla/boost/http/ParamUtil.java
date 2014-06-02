@@ -1,5 +1,7 @@
 package edu.ucla.boost.http;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import edu.ucla.boost.Confidence;
@@ -43,15 +45,26 @@ public class ParamUtil {
 	 * Return null if the format is invalid or violates some restrictions.
 	 * @return
 	 */
-	public String getSelectQueryString() {
-		String query = paramMap.get(Param.QUERY).trim();
-		query = query.replace(";", "");
-		// TODO: query should contain limit in order to be executed now
-		if (!query.contains("limit")) {
-			Log.log("should contain limit else won't be executed");
-			return null;
+	public List<String> getQueryList() {
+		List<String> res = new ArrayList<String>();
+		
+		String tmp = paramMap.get(Param.QUERY);
+		String[] sqls = tmp.split(";");
+		
+		for (String sql: sqls) {
+			String query = sql.trim().toLowerCase();
+			// TODO: query should contain limit in order to be executed now
+			if (query.startsWith("select") && !query.contains("limit")) {
+				Log.log("select should contain limit else won't be executed");
+			}
+			else if (query.length() < 3) {
+			}
+			else {
+				res.add(query);
+			}
 		}
-		return query;
+		
+		return res;
 	}
 	
 	/**

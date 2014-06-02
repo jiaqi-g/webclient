@@ -5,6 +5,8 @@ import fi.iki.elonen.NanoHTTPD.Response.Status;
 import fi.iki.elonen.ServerRunner;
 
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.util.List;
 
 import edu.ucla.boost.Log;
 import edu.ucla.boost.http.ParamUtil;
@@ -53,17 +55,18 @@ public class Server extends NanoHTTPD {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				} else if (uri.equals("/search")) {
-					String query = params.getSelectQueryString();
-					if (query == null) {
-						return null;
+					//support batch execution
+					List<String> sqls = params.getQueryList();
+					JdbcClient client = new JdbcClient();
+					ResultSet rs = null;
+					for (String sql: sqls) {
+						rs = client.executeSQL(sql);
 					}
-					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makeTable(new JdbcClient().executeSQL(query), params));
+					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makeTable(rs, params));
 				} else if (uri.equals("/plan")) {
-					String query = params.getExplainQueryString();
-					if (query == null) {
-						return null;
-					}
-					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makePlan(new JdbcClient().executeSQL(query)));
+					//Log.log("require query plan");
+					mbuffer = Asset.getPlan();
+					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else {
 					//Log.log("Opening file "+ uri.substring(1));
 					Log.log("Can not find MIME type for " + uri + ", open default page.");

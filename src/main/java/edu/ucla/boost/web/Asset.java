@@ -13,6 +13,9 @@ public class Asset {
 	public static final String rootPath = "/home/victor/boost_website";
 	public static final String defaultPage = "/index.html";
 	
+	//the place relative to server
+	public static final String planFile = "/home/victor/shark/shark/json_plan.txt";
+	
 	public static InputStream open(String uri) {
 		InputStream is = null;
 		try {
@@ -28,5 +31,18 @@ public class Asset {
 	
 	public static InputStream openDefault() {
 		return open(defaultPage);
+	}
+	
+	public static InputStream getPlan() {
+		InputStream is = null;
+		try {
+			is = new FileInputStream(planFile);
+			//is.close(); 
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return is;
 	}
 }
