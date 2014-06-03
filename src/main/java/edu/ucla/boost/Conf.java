@@ -3,6 +3,10 @@ package edu.ucla.boost;
 public class Conf {
 	static boolean debug = true;
 	static boolean sharkMode = true;
+	public static boolean record = true;
+	public static String testFileName = "test.txt";
+	
+	public static final String autoTestResultFolder = "test/auto";
 	
 	//static String serverName = "wise-u10.cs.ucla.edu";
 	static String serverName = "localhost";

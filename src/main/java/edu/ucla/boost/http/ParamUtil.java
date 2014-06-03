@@ -52,10 +52,10 @@ public class ParamUtil {
 		String[] sqls = tmp.split(";");
 		
 		for (String sql: sqls) {
-			String query = sql.trim().toLowerCase();
+			String query = sql.trim();
 			// TODO: query should contain limit in order to be executed now
-			if (query.startsWith("select") && !query.contains("limit")) {
-				Log.log("select should contain limit else won't be executed");
+			if (query.toLowerCase().contains("lineitem") && !query.toLowerCase().contains("limit")) {
+				Log.log("opertations on lineitem should contain limit else won't be executed");
 			}
 			else if (query.length() < 3) {
 			}

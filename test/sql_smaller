@@ -1,0 +1,6 @@
+select srv_sum(v1), srv_count(), srv_avg(v1), cond_merge(t2.c)
+from abmtest t1 join
+        (select gen_id() as id_c, srv_less_than(Srv, v3, ID) as c 
+                from abmtest a join (
+                        select gen_id() as ID, srv_sum(v1) as Srv, cond_merge() from abmtest group by id3) b) t2
+on t1.tid = t2.id_c;

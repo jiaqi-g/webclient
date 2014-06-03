@@ -42,8 +42,7 @@ public class JdbcClient {
 		}
 	}
 
-	public ResultSet executeSQL(String sql) throws SQLException {
-		sql = sql.toLowerCase().trim();
+	public ResultSet executeSQL(String sql) throws SQLException {;
 		//if (sql.startsWith("select")) {
 		return stmt.executeQuery(prepareSQL(sql));
 		//}
@@ -54,7 +53,7 @@ public class JdbcClient {
 		StringBuilder res = new StringBuilder();
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
-		res.append("**Result:**\n");
+		//res.append("**Result:**\n");
 
 		int index = 0;
 		while (rs.next()) {
