@@ -7,6 +7,7 @@ public class Conf {
 	public static String testFileName = "test.txt";
 	
 	public static final String autoTestResultFolder = "test/auto";
+	public static final String simpleTestResultFolder = "test/simple";
 	
 	//static String serverName = "wise-u10.cs.ucla.edu";
 	static String serverName = "localhost";

@@ -19,6 +19,7 @@ public class TestGenUtil {
 	
 	public static final String scriptFile = "/home/victor/Dropbox/hive/testing/query.sql";
 	public List<String> sqls = new ArrayList<String>();
+	boolean protect = true;
 	
 	private void extractSQLs(List<String> lst) {
 		StringBuilder sb = new StringBuilder();
@@ -51,6 +52,10 @@ public class TestGenUtil {
 	 * db access
 	 */
 	public void genResFiles() {
+		if (protect) {
+			throw new RuntimeException("Protect previous running results!");
+		}
+		
 		JdbcClient client = new JdbcClient();
 		
 		for (int i=0; i<sqls.size(); i++) {

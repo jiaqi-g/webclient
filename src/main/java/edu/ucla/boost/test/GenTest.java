@@ -18,7 +18,7 @@ public class GenTest {
 			sb.append("String q = \"" + query + "\";\n");
 			sb.append("String testResult = JdbcClient.getPrettyResult(client.executeSQL(q));\n");		
 			sb.append("String correctResult = FileSystem.readFileAsString(Conf.autoTestResultFolder + \"/" + label +"_result\");\n");
-			sb.append("assertEquals(testResult.trim(), correctResult.trim());\n");
+			sb.append("assertEquals(correctResult.trim(), testResult.trim());\n");
 			sb.append("}");
 			
 			return sb.toString();

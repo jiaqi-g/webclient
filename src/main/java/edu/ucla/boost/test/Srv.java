@@ -31,6 +31,11 @@ class Res {
 	}
 }
 
+/**
+ * Warning: not incremental maintain
+ * @author victor
+ *
+ */
 public class Srv {
 	
 	public static final int sampleSize = 100;
@@ -40,6 +45,7 @@ public class Srv {
 	Double squaresum = 0.0;
 	int cnt = 0;
 	
+	@Deprecated
 	public Srv(List<Double> lst) {
 		this.lst = lst;
 		for (Double d: lst) {
@@ -95,6 +101,9 @@ public class Srv {
 		Iterator<String> iter= groups.iterator();
 		String baseLine = iter.next();
 		List<Double> baseLst = toDoubleList(baseLine.split(","));
+		if (baseLst.size() == 1 && (baseLst.get(0) - 0) < 0.001) {
+			baseLst.clear();
+		}
 		
 		Double lowest = Double.MAX_VALUE;
 		Double highest = Double.MIN_VALUE;
@@ -135,6 +144,9 @@ public class Srv {
 		Iterator<String> iter= groups.iterator();
 		String baseLine = iter.next();
 		List<Double> baseLst = toDoubleList(baseLine.split(","));
+		if (baseLst.size() == 1 && (baseLst.get(0) - 0) < 0.001) {
+			baseLst.clear();
+		}
 		
 		Double lowest = Double.MAX_VALUE;
 		Double highest = Double.MIN_VALUE;
@@ -175,6 +187,9 @@ public class Srv {
 		Iterator<String> iter= groups.iterator();
 		String baseLine = iter.next();
 		List<Double> baseLst = toDoubleList(baseLine.split(","));
+		if (baseLst.size() == 1 && (baseLst.get(0) - 0) < 0.001) {
+			baseLst.clear();
+		}
 		
 		Double lowest = Double.MAX_VALUE;
 		Double highest = Double.MIN_VALUE;
