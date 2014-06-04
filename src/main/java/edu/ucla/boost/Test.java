@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 public class Test {
 	
-	
 	public static void main(String[] args) throws JSONException {
 		JSONObject obj = new JSONObject();
 		obj.put("name", "Top Level");

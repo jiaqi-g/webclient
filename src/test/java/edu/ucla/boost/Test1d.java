@@ -21,7 +21,7 @@ public class Test1d extends TestCase {
 	static JdbcClient client;
 
 	static {
-		ConfUtil.loadConf();
+		ConfUtil.loadConf(null);
 		
 		try {
 			String q = "";

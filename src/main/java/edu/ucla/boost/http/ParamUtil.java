@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import edu.ucla.boost.Confidence;
-import edu.ucla.boost.Quantile;
 import edu.ucla.boost.common.Log;
 import edu.ucla.boost.common.Param;
+import edu.ucla.boost.math.Confidence;
+import edu.ucla.boost.math.Quantile;
 
 public class ParamUtil {
 	

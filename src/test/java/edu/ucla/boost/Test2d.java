@@ -20,7 +20,7 @@ public class Test2d extends TestCase {
 	static JdbcClient client;
 
 	static {
-		ConfUtil.loadConf();
+		ConfUtil.loadConf(null);
 		
 		try {
 			String q = "";

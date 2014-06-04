@@ -19,7 +19,7 @@ public class Test0d extends TestCase {
 	static JdbcClient client;
 
 	static {
-		ConfUtil.loadConf();
+		ConfUtil.loadConf(null);
 		
 		String q = "";
 		client = new JdbcClient();

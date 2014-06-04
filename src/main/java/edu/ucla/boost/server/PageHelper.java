@@ -8,13 +8,13 @@ import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
 
-import edu.ucla.boost.Confidence;
-import edu.ucla.boost.Quantile;
 import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.FileSystem;
 import edu.ucla.boost.common.Log;
 import edu.ucla.boost.common.Param;
 import edu.ucla.boost.http.ParamUtil;
+import edu.ucla.boost.math.Confidence;
+import edu.ucla.boost.math.Quantile;
 
 public class PageHelper {
 	
@@ -91,8 +91,6 @@ public class PageHelper {
 		boolean doExist = params.doExist();
 		boolean doQuantile = params.doQuantile();
 		boolean doConfidence = params.doConfidence();
-		Quantile quantile = params.getQuantile();
-		Confidence confidence = params.getConfidence();
 		
 		if (doVariance) {
 			head.add(Param.VARIANCE_COLUMN_NAME);
@@ -101,9 +99,11 @@ public class PageHelper {
 			head.add(Param.EXIST_COLUMN_NAME);
 		}
 		if (doQuantile) {
+			Quantile quantile = params.getQuantile();
 			head.add(Param.QUANTILE_COLUMN_NAME + "_" + quantile.getQuantile() + "%");
 		}
 		if (doConfidence) {
+			Confidence confidence = params.getConfidence();
 			head.add(Param.CONFIDENCE_COLUMN_NAME + "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)");
 		}
 		

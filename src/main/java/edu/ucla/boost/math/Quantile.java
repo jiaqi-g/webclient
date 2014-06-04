@@ -1,4 +1,4 @@
-package edu.ucla.boost;
+package edu.ucla.boost.math;
 
 import edu.ucla.boost.common.Log;
 

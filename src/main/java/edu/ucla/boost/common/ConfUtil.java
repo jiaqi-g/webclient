@@ -44,9 +44,13 @@ public class ConfUtil {
 		return success;
 	}
 
-	public static void loadConf() {
+	public static void loadConf(Path path) {
 		try {
-			Path path = Paths.get("config");
+			if (path == null) {
+				Log.warn("Using config file in project path");
+				path = Paths.get("config");
+			}
+
 			try (Scanner scanner =  new Scanner(path, StandardCharsets.UTF_8.name())) {
 				while (scanner.hasNextLine()){
 					String line = scanner.nextLine().trim();
@@ -65,15 +69,20 @@ public class ConfUtil {
 		}
 	}
 
-	public static void printArgs() throws Exception {
+	public static void printArgs() {
 		//System.out.println("[Conf Args]");
-		for (Field f: fields) {
-			System.out.println(f.getName() + ": " + f.get(null));
+		try {
+			for (Field f: fields) {
+				System.out.println(f.getName() + ": " + f.get(null));
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		ConfUtil.loadConf();
+		ConfUtil.loadConf(null);
 		ConfUtil.printArgs();
 	}
 }

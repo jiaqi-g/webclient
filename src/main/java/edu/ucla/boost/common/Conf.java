@@ -12,6 +12,7 @@ public class Conf {
 	
 	public static String autoTestResultFolder = "test/auto";
 	public static String simpleTestResultFolder = "test/simple";
+	public static Integer port = 8080;
 	public static Integer sharkPort = 10000;
 	public static Integer hivePort = 10000;
 	
