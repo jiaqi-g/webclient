@@ -8,12 +8,10 @@ import java.sql.DriverManager;
 
 import org.apache.hadoop.hive.jdbc.HiveQueryResultSet;
 
-import edu.ucla.boost.Conf;
-import edu.ucla.boost.Log;
+import edu.ucla.boost.common.Conf;
+import edu.ucla.boost.common.Log;
 
 public class JdbcClient {
-
-	String s = "load data local inpath '/home/victor/emp_data.txt' into table test";
 	private static String driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
 	private Connection con = null;
 	private Statement stmt = null;

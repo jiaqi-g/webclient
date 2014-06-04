@@ -4,20 +4,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.ucla.boost.Conf;
-import edu.ucla.boost.FileSystem;
-import edu.ucla.boost.Log;
+import edu.ucla.boost.common.Conf;
+import edu.ucla.boost.common.FileSystem;
+import edu.ucla.boost.common.Log;
 import edu.ucla.boost.jdbc.JdbcClient;
 
 /**
  * Run sql script without setting up server
- * 
- * @author victor
  *
  */
 public class TestGenUtil {
 	
-	public static final String scriptFile = "/home/victor/Dropbox/hive/testing/query.sql";
+	public static final String scriptFile = Conf.dropboxPath + "/hive/testing/query.sql";
 	public List<String> sqls = new ArrayList<String>();
 	boolean protect = true;
 	

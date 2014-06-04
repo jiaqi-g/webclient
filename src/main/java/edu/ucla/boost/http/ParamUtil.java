@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import edu.ucla.boost.Confidence;
-import edu.ucla.boost.Log;
-import edu.ucla.boost.Param;
 import edu.ucla.boost.Quantile;
+import edu.ucla.boost.common.Log;
+import edu.ucla.boost.common.Param;
 
 public class ParamUtil {
 	

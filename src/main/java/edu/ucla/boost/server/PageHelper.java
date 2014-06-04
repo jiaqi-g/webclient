@@ -8,12 +8,12 @@ import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
 
-import edu.ucla.boost.Conf;
 import edu.ucla.boost.Confidence;
-import edu.ucla.boost.FileSystem;
-import edu.ucla.boost.Log;
-import edu.ucla.boost.Param;
 import edu.ucla.boost.Quantile;
+import edu.ucla.boost.common.Conf;
+import edu.ucla.boost.common.FileSystem;
+import edu.ucla.boost.common.Log;
+import edu.ucla.boost.common.Param;
 import edu.ucla.boost.http.ParamUtil;
 
 public class PageHelper {
@@ -79,12 +79,6 @@ public class PageHelper {
 			return "";
 		}
 		
-		try {
-			FileSystem.createFile(Conf.testFileName);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
 		
@@ -123,10 +117,6 @@ public class PageHelper {
 				if (obj != null) {
 					String s = obj.toString().trim();
 					row.add(s);
-					if (Conf.record) {
-						FileSystem.appendToFile(Conf.testFileName, s);
-					}
-					//Log.log(obj.getClass() + "");
 				}
 				else {
 					row.add("null");

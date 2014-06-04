@@ -1,4 +1,4 @@
-package edu.ucla.boost;
+package edu.ucla.boost.common;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+
 /**
  * Abstraction of Unix file System, common utils for file access.
- * @author victor
  *
  */
 public class FileSystem {

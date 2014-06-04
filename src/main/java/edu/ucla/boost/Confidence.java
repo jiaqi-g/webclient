@@ -1,5 +1,7 @@
 package edu.ucla.boost;
 
+import edu.ucla.boost.common.Log;
+
 public class Confidence {
 	//5 means 5%
 	private int confidenceFrom;

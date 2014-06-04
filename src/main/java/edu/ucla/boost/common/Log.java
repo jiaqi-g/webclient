@@ -1,8 +1,8 @@
-package edu.ucla.boost;
+package edu.ucla.boost.common;
+
 
 /**
  * Class for log management
- * @author victor
  *
  */
 public class Log {

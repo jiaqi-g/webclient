@@ -1,4 +1,4 @@
-package edu.ucla.boost;
+package edu.ucla.boost.common;
 
 public class Param {
 	/**

@@ -3,6 +3,9 @@ package edu.ucla.boost;
 import java.sql.SQLException;
 import java.util.List;
 
+import edu.ucla.boost.common.Conf;
+import edu.ucla.boost.common.ConfUtil;
+import edu.ucla.boost.common.FileSystem;
 import edu.ucla.boost.jdbc.JdbcClient;
 
 import junit.framework.Test;
@@ -17,6 +20,8 @@ public class Test3d extends TestCase {
 	static JdbcClient client;
 
 	static {
+		ConfUtil.loadConf();
+		
 		try {
 			String q = "";
 			client = new JdbcClient();
@@ -28,7 +33,7 @@ public class Test3d extends TestCase {
 			q = "create table abmtest (tid int, test_id int, id1 int, id2 int, id3 int, v1 double, v2 double, v3 double) row format delimited fields terminated by \"|\"";
 			client.executeSQL(q);
 
-			q = "LOAD DATA LOCAL INPATH '/home/victor/Dropbox/hive/testing/abmtest.txt' OVERWRITE INTO TABLE abmtest";
+			q = "LOAD DATA LOCAL INPATH '" + Conf.dropboxPath + "/hive/testing/abmtest.txt' OVERWRITE INTO TABLE abmtest";
 			client.executeSQL(q);
 
 			//2d data
@@ -38,7 +43,7 @@ public class Test3d extends TestCase {
 			q = "create table abm2dtest (tid int, test_id int, id1 int, id2 int, id3 int, v1 double, v2 double, v3 double) row format delimited fields terminated by \"|\"";
 			client.executeSQL(q);
 
-			q = "LOAD DATA LOCAL INPATH '/home/victor/Dropbox/hive/testing/abm2dtest.txt' OVERWRITE INTO TABLE abm2dtest";
+			q = "LOAD DATA LOCAL INPATH '" + Conf.dropboxPath + "/hive/testing/abm2dtest.txt' OVERWRITE INTO TABLE abm2dtest";
 			client.executeSQL(q);
 
 			//3d data
@@ -48,7 +53,7 @@ public class Test3d extends TestCase {
 			q = "create table abm3dtest (tid int, test_id int, id1 int, id2 int, id3 int, v1 double, v2 double, v3 double) row format delimited fields terminated by \"|\"";
 			client.executeSQL(q);
 
-			q = "LOAD DATA LOCAL INPATH '/home/victor/Dropbox/hive/testing/abm3dtest.txt' OVERWRITE INTO TABLE abm3dtest";
+			q = "LOAD DATA LOCAL INPATH '" + Conf.dropboxPath + "/hive/testing/abm3dtest.txt' OVERWRITE INTO TABLE abm3dtest";
 			client.executeSQL(q);
 		}
 		catch (SQLException e) {

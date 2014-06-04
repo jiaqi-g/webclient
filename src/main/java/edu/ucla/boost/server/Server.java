@@ -8,14 +8,14 @@ import java.io.InputStream;
 import java.sql.ResultSet;
 import java.util.List;
 
-import edu.ucla.boost.Log;
+import edu.ucla.boost.common.ConfUtil;
+import edu.ucla.boost.common.Log;
 import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.jdbc.JdbcClient;
 import edu.ucla.boost.web.Asset;
 import edu.ucla.boost.web.Type;
 
 public class Server extends NanoHTTPD {
-	//private static String debugQuery = "select * from lineitem limit 10";
 	
 	public Server() {
 		super(8080);
@@ -83,6 +83,7 @@ public class Server extends NanoHTTPD {
 	}
 
 	public static void main(String[] args) {
+		ConfUtil.loadConf();
 		JdbcClient.load();
 		ServerRunner.run(Server.class);
 	}

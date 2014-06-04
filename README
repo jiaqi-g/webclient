@@ -1,6 +1,11 @@
-The Http Server for communication of user to boost system.
+The Http Server for user to access boost server from web.
 
-After clone, first run ./publish.sh to publish jars that can not be found in central repo.
+Connect to boost server and render result to user.
 
-Then
-	mvn clean package
+Run steps
+
+1. modify "config" file to reflect actual settings of needed paths
+2. run "publish.sh" to load necessary libs into local maven repos
+3. run "run.sh" to compile/package/start server
+
+author: victor 
