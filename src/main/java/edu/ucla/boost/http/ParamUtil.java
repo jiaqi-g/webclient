@@ -54,10 +54,12 @@ public class ParamUtil {
 		for (String sql: sqls) {
 			String query = sql.trim();
 			// TODO: query should contain limit in order to be executed now
-			if (query.toLowerCase().contains("lineitem") && !query.toLowerCase().contains("limit")) {
-				Log.log("opertations on lineitem should contain limit else won't be executed");
-			}
-			else if (query.length() < 3) {
+			
+			//if (query.toLowerCase().contains("lineitem") && !query.toLowerCase().contains("limit")) {
+				//Log.log("opertations on lineitem should contain limit else won't be executed");
+			//}
+			//else
+			if (query.length() < 3) {
 			}
 			else {
 				res.add(query);

@@ -1,5 +1,8 @@
 package edu.ucla.boost.test;
 
+import edu.ucla.boost.common.Conf;
+import edu.ucla.boost.common.FileSystem;
+
 public class GenTest {
 	static class TestCase {
 		String label;
@@ -19,6 +22,20 @@ public class GenTest {
 			sb.append("String testResult = JdbcClient.getPrettyResult(client.executeSQL(q));\n");		
 			sb.append("String correctResult = FileSystem.readFileAsString(Conf.autoTestResultFolder + \"/" + label +"_result\");\n");
 			sb.append("assertEquals(correctResult.trim(), testResult.trim());\n");
+			sb.append("}");
+			
+			return sb.toString();
+		}
+		
+		public String getTpchTestMethod() {
+			StringBuilder sb = new StringBuilder();
+			String label = this.label.toUpperCase();
+			
+			sb.append("public void testTPCH_Q" + label + "() throws Exception {\n");
+			sb.append("String q = FileSystem.readFileAsString(Conf.autoTestResultFolder + \"q" + label + "\");\n");
+			sb.append("String testResult = JdbcClient.getPrettyResult(client.executeSQL(q));\n");
+			//sb.append("String correctResult = FileSystem.readFileAsString(Conf.autoTestResultFolder + \"/" + label +"_result\");\n");
+			//sb.append("assertEquals(correctResult.trim(), testResult.trim());\n");
 			sb.append("}");
 			
 			return sb.toString();

@@ -1,6 +1,7 @@
 package edu.ucla.boost.test;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,9 @@ import edu.ucla.boost.jdbc.JdbcClient;
 public class TestGenUtil {
 	
 	public static final String scriptFile = Conf.dropboxPath + "/hive/testing/query.sql";
+	
+	public static final String pathPrefix = "/home/victor/Dropbox/hive/TPC-H_on_Hive/tpch/eligible_queries/corrected"; //_input
+	
 	public List<String> sqls = new ArrayList<String>();
 	boolean protect = true;
 	
@@ -49,25 +53,42 @@ public class TestGenUtil {
 	/**
 	 * db access
 	 */
-	public void genResFiles() {
-		if (protect) {
-			throw new RuntimeException("Protect previous running results!");
-		}
-		
+//	public void genResFiles() {
+//		if (protect) {
+//			throw new RuntimeException("Protect previous running results!");
+//		}
+//		
+//		JdbcClient client = new JdbcClient();
+//		
+//		for (int i=0; i<sqls.size(); i++) {
+//			String label = "Q" + i;
+//			String sql = sqls.get(i).replace(";", "");
+//			String filename = Conf.autoTestResultFolder + "/" + label + "_result";
+//			
+//			try {
+//				FileSystem.createFile(filename);
+//				FileSystem.writeFileAsString(filename, JdbcClient.getPrettyResult(client.executeSQL(sql)));
+//
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
+	
+	public static void genTPCHFinalRes() throws Exception {
 		JdbcClient client = new JdbcClient();
 		
-		for (int i=0; i<sqls.size(); i++) {
-			String label = "Q" + i;
-			String sql = sqls.get(i).replace(";", "");
-			String filename = Conf.autoTestResultFolder + "/" + label + "_result";
-			
-			try {
-				FileSystem.createFile(filename);
-				FileSystem.writeFileAsString(filename, JdbcClient.getPrettyResult(client.executeSQL(sql)));
+		//int[] labels = new int[]{1, 3, 5, 6, 7, 8, 9, 10, 11, 12, 14, 19};
+		int[] labels = new int[]{1}; //, 3, 5, 6, 7, 8, 9, 10, 11, 12, 14, 19};
+		
+		for (int i=0; i<labels.length; i++) {
+			int index = labels[i];
+			String query = FileSystem.readFileAsString(pathPrefix + "/q" + index + ".hive").replace("\n", " ").split(";")[1];
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			String out = "boost_output";
+			FileSystem.writeFileAsString(out, 
+			JdbcClient.getPrettyResult(
+			client.executeSQL(query)));
 		}
 	}
 	
@@ -84,11 +105,12 @@ public class TestGenUtil {
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		JdbcClient.load();
-		TestGenUtil test = new TestGenUtil();
-		//test.genResFiles();
-		test.genTestCases();
+		genTPCHFinalRes();
+//		TestGenUtil test = new TestGenUtil();
+//		//test.genResFiles();
+//		test.genTestCases();
 	}
 	
 }

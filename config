@@ -1,5 +1,5 @@
 # need to specify
-debug = true
+debug = false
 dropboxPath = /home/victor/Dropbox
 websitePath = /home/victor/boost_website
 sharkPath = /home/victor/shark/shark
