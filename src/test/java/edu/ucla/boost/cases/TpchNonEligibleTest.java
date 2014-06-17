@@ -1,7 +1,6 @@
-package edu.ucla.boost;
+package edu.ucla.boost.cases;
 
-import edu.ucla.boost.common.Conf;
-import edu.ucla.boost.common.ConfUtil;
+import edu.ucla.boost.test.Conf;
 import edu.ucla.boost.common.FileSystem;
 import edu.ucla.boost.jdbc.JdbcClient;
 
@@ -10,11 +9,12 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * additional test for q17, q18 inner group by
+ * 
+ * non-eligible queries test for q11, q20
  * @author victor
  *
  */
-public class TpchAdditionalTest extends TestCase {
+public class TpchNonEligibleTest extends TestCase {
 
 	static JdbcClient client;
 	static boolean openABM = true;
@@ -22,16 +22,16 @@ public class TpchAdditionalTest extends TestCase {
 	String q = "";
 
 	static {
-		ConfUtil.loadConf(null);
 		client = new JdbcClient();
 	}
 
-	public TpchAdditionalTest(String testName) throws Exception {
+	public TpchNonEligibleTest(String testName) throws Exception {
 		super(testName);
+
 	}
 
 	public static Test suite() {
-		return new TestSuite(TpchAdditionalTest.class);
+		return new TestSuite(TpchNonEligibleTest.class);
 	}
 
 	public void setABM() throws Exception {
@@ -43,13 +43,12 @@ public class TpchAdditionalTest extends TestCase {
 		}
 		client.executeSQL(q);	
 	}
-
-	public void testQ17_inner() throws Exception {
-		String[] queries = FileSystem.readFileAsString(Conf.tpchQueryFolder + "/q17_inner.hive").split(";");
+	
+	public void testQ11() throws Exception {
+		String[] queries = FileSystem.readFileAsString(Conf.tpchQueryFolder + "/q11.hive").split(";");
 
 		//set abm mode
-		q = "set hive.abm=false";
-		client.executeSQL(q);
+		setABM();
 
 		//set hive.abm.sampled
 		q = queries[0].trim();
@@ -62,12 +61,11 @@ public class TpchAdditionalTest extends TestCase {
 		System.out.println(testResult);
 	}
 
-	public void testQ18_inner() throws Exception {
-		String[] queries = FileSystem.readFileAsString(Conf.tpchQueryFolder + "/q18_inner.hive").split(";");
+	public void testQ20() throws Exception {
+		String[] queries = FileSystem.readFileAsString(Conf.tpchQueryFolder + "/q20_not.hive").split(";");
 
 		//set abm mode
-		q = "set hive.abm=false";
-		client.executeSQL(q);
+		setABM();
 
 		//set hive.abm.sampled
 		q = queries[0].trim();

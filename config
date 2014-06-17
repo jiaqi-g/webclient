@@ -1,13 +1,10 @@
 # need to specify
 debug = false
-dropboxPath = /home/victor/Dropbox
 websitePath = /home/victor/boost_website
 sharkPath = /home/victor/shark/shark
 serverName = localhost
 
 # optional
-autoTestResultFolder = test/auto
-simpleTestResultFolder = test/simple
 port = 8080
 sharkPort = 10000
 hivePort = 10000

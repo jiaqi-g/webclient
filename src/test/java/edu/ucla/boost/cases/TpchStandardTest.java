@@ -1,7 +1,6 @@
-package edu.ucla.boost;
+package edu.ucla.boost.cases;
 
-import edu.ucla.boost.common.Conf;
-import edu.ucla.boost.common.ConfUtil;
+import edu.ucla.boost.test.Conf;
 import edu.ucla.boost.common.FileSystem;
 import edu.ucla.boost.jdbc.JdbcClient;
 
@@ -22,8 +21,6 @@ public class TpchStandardTest extends TestCase {
 	String q = "";
 
 	static {
-		ConfUtil.loadConf(null);
-
 		String q = "";
 		client = new JdbcClient();
 

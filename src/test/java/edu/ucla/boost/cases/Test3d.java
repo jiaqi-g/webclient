@@ -1,10 +1,9 @@
-package edu.ucla.boost;
+package edu.ucla.boost.cases;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import edu.ucla.boost.common.Conf;
-import edu.ucla.boost.common.ConfUtil;
+import edu.ucla.boost.test.Conf;
 import edu.ucla.boost.common.FileSystem;
 import edu.ucla.boost.jdbc.JdbcClient;
 
@@ -15,12 +14,11 @@ import junit.framework.TestSuite;
 /**
  * Set flags length 0
  */
-public class Test2d extends TestCase {
+public class Test3d extends TestCase {
 
 	static JdbcClient client;
 
 	static {
-		ConfUtil.loadConf(null);
 		
 		try {
 			String q = "";
@@ -66,7 +64,7 @@ public class Test2d extends TestCase {
 	 *
 	 * @param testName name of the test case
 	 */
-	public Test2d(String testName) throws Exception {
+	public Test3d(String testName) throws Exception {
 		super(testName);
 		//FileSystem.createFolder(folder);
 	}
@@ -75,21 +73,21 @@ public class Test2d extends TestCase {
 	 * @return the suite of tests being tested
 	 */
 	public static Test suite() {
-		return new TestSuite(Test2d.class);
+		return new TestSuite(Test3d.class);
 	}
-	
-	public void testSmaller2d() throws Exception {
+
+	public void testSmaller3d() throws Exception {
 		//set 1 flag to false
-		String q = "select srv_sum(v1), srv_count(), srv_avg(v1), cond_merge(t2.c) from abm2dtest t1 join (select t2_1.id_c as id_c, cond_join(c1, c2) as c " +
-				"from (select gen_id() as id_c, srv_less_than(Srv, v3, ID) as c1 from abm2dtest a join (select gen_id() as ID, srv_sum(v1) as Srv, cond_merge() from abm2dtest group by id1) b " +
-				"on a.test_id = b.ID) t2_1 join " +
-				"(select gen_id() as id_c, srv_less_than(Srv, v2, ID) as c2 " +
-				"from abm2dtest a join (select gen_id() as ID, srv_sum(v1) as Srv, cond_merge() " +
-				"from abm2dtest group by id1) b " +
-				"on a.test_id = b.ID) t2_2 on t2_1.id_c = t2_2.id_c) t2 on t1.tid = t2.id_c";
+		String q = "select srv_sum(v1), srv_count(), srv_avg(v1), cond_merge(t2.c1) " +
+				"from abm3dtest t1 join (select gen_id() as id_c, " +
+				"cond_join(srv_less_than(Srv, v3, ID), srv_less_than(Srv, v1, ID), srv_less_than(Srv, v2, ID)) as c1 " +
+				"from abm3dtest a join " +
+				"(select gen_id() as ID, srv_sum(v1) as Srv, cond_merge() from abm3dtest group by id1) b " +
+				"on a.test_id = b.ID) t2 " +
+				"on t1.tid = t2.id_c";
 
 		String testResult = JdbcClient.getPrettyResult(client.executeSQL(q));
-		String correctResult = FileSystem.readFileAsString(Conf.simpleTestResultFolder + "/smaller2d_result");
+		String correctResult = FileSystem.readFileAsString(Conf.simpleTestResultFolder + "/smaller3d_result");
 		assertEquals(correctResult.trim(), testResult.trim());
 	}
 }

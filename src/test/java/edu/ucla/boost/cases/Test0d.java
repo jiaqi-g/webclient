@@ -1,9 +1,8 @@
-package edu.ucla.boost;
+package edu.ucla.boost.cases;
 
 import java.sql.SQLException;
 
-import edu.ucla.boost.common.Conf;
-import edu.ucla.boost.common.ConfUtil;
+import edu.ucla.boost.test.Conf;
 import edu.ucla.boost.common.FileSystem;
 import edu.ucla.boost.jdbc.JdbcClient;
 
@@ -19,8 +18,6 @@ public class Test0d extends TestCase {
 	static JdbcClient client;
 
 	static {
-		ConfUtil.loadConf(null);
-		
 		String q = "";
 		client = new JdbcClient();
 

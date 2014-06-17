@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.ucla.boost.common.Conf;
+import edu.ucla.boost.test.Conf;
 import edu.ucla.boost.common.FileSystem;
 import edu.ucla.boost.common.Log;
 import edu.ucla.boost.jdbc.JdbcClient;
@@ -15,10 +15,6 @@ import edu.ucla.boost.jdbc.JdbcClient;
  *
  */
 public class TestGenUtil {
-	
-	public static final String scriptFile = Conf.dropboxPath + "/hive/testing/query.sql";
-	
-	public static final String pathPrefix = "/home/victor/Dropbox/hive/TPC-H_on_Hive/tpch/eligible_queries/corrected"; //_input
 	
 	public List<String> sqls = new ArrayList<String>();
 	boolean protect = true;
@@ -43,7 +39,7 @@ public class TestGenUtil {
 	
 	public TestGenUtil() {
 		try {
-			extractSQLs(FileSystem.readAllLines(scriptFile));
+			extractSQLs(FileSystem.readAllLines(Conf.scriptFile));
 			//FileSystem.createFile("output.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -83,7 +79,7 @@ public class TestGenUtil {
 		
 		for (int i=0; i<labels.length; i++) {
 			int index = labels[i];
-			String query = FileSystem.readFileAsString(pathPrefix + "/q" + index + ".hive").replace("\n", " ").split(";")[1];
+			String query = FileSystem.readFileAsString(Conf.pathPrefix + "/q" + index + ".hive").replace("\n", " ").split(";")[1];
 
 			String out = "boost_output";
 			FileSystem.writeFileAsString(out, 

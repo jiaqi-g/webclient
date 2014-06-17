@@ -1,9 +1,7 @@
 package edu.ucla.boost.test;
 
-import edu.ucla.boost.common.Conf;
-import edu.ucla.boost.common.FileSystem;
-
 public class GenTest {
+	
 	static class TestCase {
 		String label;
 		String query;
