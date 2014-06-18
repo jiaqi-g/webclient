@@ -2,6 +2,7 @@ package edu.ucla.boost.common;
 
 public class Conf {
 	public static Boolean debug = true;
+	public static Boolean connectDB = false;
 	
 	public static String user = "victor";
 	public static String websitePath = "/home/victor/boost_website";

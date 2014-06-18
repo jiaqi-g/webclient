@@ -1,4 +1,5 @@
 # need to specify
+connectDB = false
 debug = true
 user = victor
 websitePath = /home/victor/boost_website

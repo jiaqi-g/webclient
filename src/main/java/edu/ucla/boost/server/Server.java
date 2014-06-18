@@ -26,7 +26,6 @@ public class Server extends NanoHTTPD {
 
 	@Override
 	public Response serve(IHTTPSession session) {
-
 		String uri = session.getUri();
 		ParamUtil params = new ParamUtil(session.getParms());
 		//Method method = session.getMethod();
@@ -77,7 +76,11 @@ public class Server extends NanoHTTPD {
 					}
 					mbuffer = Asset.getPlan();
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
-				} else {
+				} else if (uri.contains(".hive")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
+				}
+				else {
 					//Log.log("Opening file "+ uri.substring(1));
 					Log.log("Can not find MIME type for " + uri + ", open default page.");
 
@@ -93,23 +96,20 @@ public class Server extends NanoHTTPD {
 	}
 
 	public static void main(String[] args) {
-		boolean test = false;
-		
-		if (!test) {
-			if (args.length != 1) {
-				Log.warn("Missing config file path");
-				System.exit(0);
-			}
+		if (args.length != 1) {
+			Log.warn("Missing config file path. Use conf in Programs.");
+		}
+		else {
 			Path path = Paths.get(args[0]);
 			Log.warn("Config file " + path + " loaded ...");
 			Log.warn("[Config]");	
 			ConfUtil.loadConf(path);
-		} else {
-			//use default conf in programs
 		}
 		
 		ConfUtil.printArgs();
-		JdbcClient.load();
+		if (Conf.connectDB) {
+			JdbcClient.load();
+		}
 		ServerRunner.run(Server.class);
 	}
 }
