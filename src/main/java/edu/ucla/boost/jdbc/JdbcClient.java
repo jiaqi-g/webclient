@@ -23,9 +23,6 @@ public class JdbcClient {
 			//only support db called "default"
 		} catch (Exception e) {
 			e.printStackTrace();
-			if (!Conf.debug) {
-				System.exit(1);
-			}
 		}
 	}
 
