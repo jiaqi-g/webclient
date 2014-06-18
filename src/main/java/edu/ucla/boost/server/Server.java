@@ -13,6 +13,7 @@ import java.util.List;
 import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.ConfUtil;
 import edu.ucla.boost.common.Log;
+import edu.ucla.boost.common.Scp;
 import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.jdbc.JdbcClient;
 import edu.ucla.boost.web.Asset;
@@ -86,18 +87,21 @@ public class Server extends NanoHTTPD {
 	}
 
 	public static void main(String[] args) {
-		if (args.length != 1) {
-			Log.warn("Missing config file path");
-			System.exit(0);
-		}
-		Path path = Paths.get(args[0]);
-		Log.warn("Config file " + path + " loaded ...");
-		Log.warn("[Config]");	
-		ConfUtil.loadConf(path);
-		//ConfUtil.loadConf(null);
-		ConfUtil.printArgs();
+//		if (args.length != 1) {
+//			Log.warn("Missing config file path");
+//			System.exit(0);
+//		}
+//		Path path = Paths.get(args[0]);
+//		Log.warn("Config file " + path + " loaded ...");
+//		Log.warn("[Config]");	
+//		ConfUtil.loadConf(path);
+//		//ConfUtil.loadConf(null);
+//		ConfUtil.printArgs();
+//		
+//		JdbcClient.load();
+//		ServerRunner.run(Server.class);
 		
-		JdbcClient.load();
-		ServerRunner.run(Server.class);
+		String s = Scp.execute(Conf.remotePlanFile, Conf.planFile);
+		Log.log(s);
 	}
 }
