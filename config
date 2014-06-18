@@ -1,5 +1,6 @@
 # need to specify
 debug = true
+user = victor
 websitePath = /home/victor/boost_website
 serverName = 131.179.64.66
 remotePlanFile = hadoop-user@131.179.64.66:~/sharks/boost/shark/json_plan.txt

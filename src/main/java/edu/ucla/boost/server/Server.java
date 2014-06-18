@@ -87,21 +87,18 @@ public class Server extends NanoHTTPD {
 	}
 
 	public static void main(String[] args) {
-//		if (args.length != 1) {
-//			Log.warn("Missing config file path");
-//			System.exit(0);
-//		}
-//		Path path = Paths.get(args[0]);
-//		Log.warn("Config file " + path + " loaded ...");
-//		Log.warn("[Config]");	
-//		ConfUtil.loadConf(path);
-//		//ConfUtil.loadConf(null);
-//		ConfUtil.printArgs();
-//		
-//		JdbcClient.load();
-//		ServerRunner.run(Server.class);
+		if (args.length != 1) {
+			Log.warn("Missing config file path");
+			System.exit(0);
+		}
+		Path path = Paths.get(args[0]);
+		Log.warn("Config file " + path + " loaded ...");
+		Log.warn("[Config]");	
+		ConfUtil.loadConf(path);
+		//ConfUtil.loadConf(null);
+		ConfUtil.printArgs();
 		
-		String s = Scp.execute(Conf.remotePlanFile, Conf.planFile);
-		Log.log(s);
+		JdbcClient.load();
+		ServerRunner.run(Server.class);
 	}
 }

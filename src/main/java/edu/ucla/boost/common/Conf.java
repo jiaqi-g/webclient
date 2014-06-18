@@ -3,6 +3,7 @@ package edu.ucla.boost.common;
 public class Conf {
 	public static Boolean debug = false;
 	
+	public static String user = "victor";
 	public static String websitePath = "/home/victor/boost_website";
 	public static String serverName = "localhost"; //"wise-u10.cs.ucla.edu";
 		
