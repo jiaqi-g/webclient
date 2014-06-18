@@ -3,4 +3,4 @@ echo "[Main] make sure you have run ./publish.sh to publish needed libs to your 
 #mvn assembly:assembly -DdescriptorId=jar-with-dependencies -Dmaven.test.skip=true
 mvn package -Dmaven.test.skip=true
 cd target
-java -jar boost_client-1.0-SNAPSHOT-jar-with-dependencies.jar ../config
+sudo java -jar boost_client-1.0-SNAPSHOT-jar-with-dependencies.jar ../config
