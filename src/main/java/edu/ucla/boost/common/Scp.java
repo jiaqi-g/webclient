@@ -9,7 +9,8 @@ public class Scp {
 	
 	public static String execute(String remotePath, String path) {
 		try {
-			Process p = new ProcessBuilder("scp", remotePath, path).start();
+			//sudo -u victor ssh hadoop-user@131.179.64.66
+			Process p = new ProcessBuilder("sudo", "-u", "victor", "scp", remotePath, path).start();
 			p.waitFor();
 //			p = new ProcessBuilder("cat", Asset.planFile).start();
 //			p.waitFor();
