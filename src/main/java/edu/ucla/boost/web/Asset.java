@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import edu.ucla.boost.common.Conf;
+import edu.ucla.boost.common.Log;
+import edu.ucla.boost.common.Scp;
 
 public class Asset {
 	
 	public static final String defaultPage = "/index.html";
-	
-	//the place relative to server
-	public static final String planFile = Conf.sharkPath + "/json_plan.txt";
 	
 	public static InputStream open(String uri) {
 		InputStream is = null;
@@ -20,8 +19,6 @@ public class Asset {
 			is = new FileInputStream(Conf.websitePath + uri);
 			//is.close(); 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return is;
@@ -32,13 +29,15 @@ public class Asset {
 	}
 	
 	public static InputStream getPlan() {
+		//copy plan file from remote machine
+		String s = Scp.execute(Conf.remotePlanFile, Conf.planFile);
+		Log.log(s);
+		
 		InputStream is = null;
 		try {
-			is = new FileInputStream(planFile);
-			//is.close(); 
+			is = new FileInputStream(Conf.planFile);
+			//is.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return is;

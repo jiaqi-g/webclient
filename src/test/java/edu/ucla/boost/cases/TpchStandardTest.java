@@ -289,4 +289,42 @@ public class TpchStandardTest extends TestCase {
 
 		System.out.println(testResult);
 	}
+	
+	public void testQ11() throws Exception {
+		String[] queries = FileSystem.readFileAsString(Conf.tpchQueryFolder + "/q11.hive").split(";");
+
+		//set abm mode
+		setABM();
+
+		//set hive.abm.sampled
+		q = queries[0].trim();
+		client.executeSQL(q);
+
+		//select
+		q = queries[1].trim();
+		String testResult = JdbcClient.getPrettyResult(client.executeSQL(q));
+
+		System.out.println(testResult);
+	}
+
+	/**
+	 * complex one, two level group by
+	 * @throws Exception
+	 */
+	public void testQ20() throws Exception {
+		String[] queries = FileSystem.readFileAsString(Conf.tpchQueryFolder + "/q20.hive").split(";");
+
+		//set abm mode
+		setABM();
+
+		//set hive.abm.sampled
+		q = queries[0].trim();
+		client.executeSQL(q);
+
+		//select
+		q = queries[1].trim();
+		String testResult = JdbcClient.getPrettyResult(client.executeSQL(q));
+
+		System.out.println(testResult);
+	}
 }

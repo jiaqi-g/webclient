@@ -92,12 +92,11 @@ public class Server extends NanoHTTPD {
 		}
 		Path path = Paths.get(args[0]);
 		Log.warn("Config file " + path + " loaded ...");
-		Log.warn("[Config]");
+		Log.warn("[Config]");	
+		ConfUtil.loadConf(path);
+		//ConfUtil.loadConf(null);
 		ConfUtil.printArgs();
 		
-		ConfUtil.loadConf(path);
-		
-		//ConfUtil.loadConf(null);
 		JdbcClient.load();
 		ServerRunner.run(Server.class);
 	}

@@ -1,10 +1,11 @@
 # need to specify
-debug = false
+debug = true
 websitePath = /home/victor/boost_website
-sharkPath = /home/victor/shark/shark
-serverName = localhost
+serverName = 131.179.64.66
+remotePlanFile = hadoop-user@131.179.64.66:~/sharks/boost/shark/json_plan.txt
+planFile = json_plan.txt
 
 # optional
-port = 8080
+port = 80
 sharkPort = 10000
 hivePort = 10000
