@@ -35,7 +35,6 @@ public class JdbcClient {
 			stmt = con.createStatement();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(1);
 		}
 	}
 
