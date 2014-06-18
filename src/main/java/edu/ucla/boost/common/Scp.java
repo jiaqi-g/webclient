@@ -16,7 +16,7 @@ public class Scp {
 //			p = new ProcessBuilder("cat", Conf.planFile).start();
 //			p.waitFor();
 						
-			BufferedReader read = new BufferedReader(new InputStreamReader(new FileInputStream(Conf.planFile)));
+			BufferedReader read = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
 			StringBuilder sb = new StringBuilder();
 			
 			while(read.ready()) {
