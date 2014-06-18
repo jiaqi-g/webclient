@@ -1,6 +1,7 @@
 package edu.ucla.boost.common;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 import edu.ucla.boost.web.Asset;
@@ -12,10 +13,10 @@ public class Scp {
 			//sudo -u victor ssh hadoop-user@131.179.64.66
 			Process p = new ProcessBuilder("sudo", "-u", Conf.user, "scp", remotePath, path).start();
 			p.waitFor();
-//			p = new ProcessBuilder("cat", Asset.planFile).start();
+//			p = new ProcessBuilder("cat", Conf.planFile).start();
 //			p.waitFor();
 						
-			BufferedReader read = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			BufferedReader read = new BufferedReader(new InputStreamReader(new FileInputStream(Conf.planFile)));
 			StringBuilder sb = new StringBuilder();
 			
 			while(read.ready()) {
