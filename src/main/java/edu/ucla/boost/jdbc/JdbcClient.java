@@ -53,6 +53,15 @@ public class JdbcClient {
 		executeSQL(sql);
 	}
 	
+	public void close() {
+		try {
+	    stmt.close();
+	    con.close();
+    } catch (SQLException e) {
+	    e.printStackTrace();
+    }
+	}
+	
 	public static String getPrettyResult(ResultSet rs) throws SQLException {
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);

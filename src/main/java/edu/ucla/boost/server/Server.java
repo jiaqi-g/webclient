@@ -126,7 +126,6 @@ public class Server extends NanoHTTPD {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains("vanilla")) {
-					System.out.println("We are here!");
 					
 					//TODO fix here
 //					List<String> sqls = params.getQueryList();
@@ -141,11 +140,14 @@ public class Server extends NanoHTTPD {
 //					}
 
 					// TODO fix me
-					double abmTime = 10; 
-					String selectSQL = "select count(*) from lineitem_5";
+					String selectSQL = "select count(*) from lineitem_2";
 					
 					if (selectSQL != null) {
-						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(20,selectSQL);
+						
+						//TODO fix me
+						double abmTime = 10; 
+						
+						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(40, selectSQL, Conf.websitePath, abmTime);
 						new Thread(runner).start();
 					}
 					mbuffer = Asset.open(uri);
