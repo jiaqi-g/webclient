@@ -74,10 +74,27 @@ public class PageHelper {
 		}
 		return res.toString();
 	}
+	
+	public static String makeAll(ResultSet rs, ParamUtil params, Time time)  throws SQLException {
+		EvaluationResultHelper eval = new EvaluationResultHelper();
+		setTable(rs, params, eval);
+		setTime(time, eval);
+		return eval.make();
+	}
+	
+	public static String makeTable(ResultSet rs, ParamUtil params)  throws SQLException {
+		EvaluationResultHelper eval = new EvaluationResultHelper();
+		setTable(rs, params, eval);
+		return eval.make();
+	}
+	
+	private static void setTime(Time time, EvaluationResultHelper eval) throws SQLException {
+		eval.setTime(time);
+	}
 
-	public static String makeTable(ResultSet rs, ParamUtil params, Time time) throws SQLException {
+	private static void setTable(ResultSet rs, ParamUtil params, EvaluationResultHelper eval) throws SQLException {
 		if (rs == null) {
-			return "";
+			return;
 		}
 
 		//construct head
@@ -159,7 +176,7 @@ public class PageHelper {
 		//		}
 
 		//Log.log("result length: " + body.size());
-		return new TableHelper(head, body, time).makeHtmlTable();
+		eval.setTable(head, body);
 	}
 	
 	public static String makeOutlinePage(String res) {

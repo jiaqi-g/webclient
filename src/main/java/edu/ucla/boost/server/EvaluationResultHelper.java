@@ -5,16 +5,36 @@ import java.util.List;
 
 import edu.ucla.boost.common.Time;
 
-public class TableHelper {
+public class EvaluationResultHelper {
 	List<Object> thead;
 	List<List<Object>> tbody;
 	StringBuilder sb;
 	Time time;
+	boolean makeTable = true;
+	boolean makeTime = true;
 	
-	public TableHelper(List<Object> head, List<List<Object>> body, Time time) {
+	public EvaluationResultHelper(List<Object> head, List<List<Object>> body, Time time) {
 		this.thead = head;
 		this.tbody = body;
 		this.time = time;
+		makeTable = true;
+		makeTime = true;
+	}
+	
+	public EvaluationResultHelper() {
+		makeTable = false;
+		makeTime = false;
+	}
+	
+	public void setTable(List<Object> head, List<List<Object>> body) {
+		this.thead = head;
+		this.tbody = body;
+		makeTable = true;
+	}
+	
+	public void setTime(Time time) {
+		this.time = time;
+		makeTime = true;
 	}
 	
 	private void makeTd(Object obj) {
@@ -59,36 +79,40 @@ public class TableHelper {
 		sb.append("</tbody>\n");
 	}
 	
-	public void openDiv(String divClass) {
+	private void openDiv(String divClass) {
 		sb.append("<div class=\""+ divClass + "\">\n");
 	}
 	
-	public void closeDiv() {
+	private void closeDiv() {
 		sb.append("</div>\n");		
 	}
 	
-	public String makeHtmlTable() {
+	public String make() {
 		sb = new StringBuilder();
 		sb.append("<div>\n");
 		
-		openDiv("timeSecDiv");
-		openDiv("abmRes");
-		sb.append(time.abmTime + "\n");
-		closeDiv();
-		openDiv("closeRes");
-		sb.append(time.closeFormTime + "\n");
-		closeDiv();
-		openDiv("vanillaRes");
-		sb.append(time.vanillaTime + "\n");
-		closeDiv();
-		closeDiv();
+		if (makeTime) {
+			openDiv("timeSecDiv");
+			openDiv("abmRes");
+			sb.append(time.abmTime + "\n");
+			closeDiv();
+			openDiv("closeRes");
+			sb.append(time.closeFormTime + "\n");
+			closeDiv();
+			openDiv("vanillaRes");
+			sb.append(time.vanillaTime + "\n");
+			closeDiv();
+			closeDiv();
+		}
 		
-		openDiv("tableSecDiv");
-		sb.append("<table class=\"table table-hover\">\n");
-		makeHead();
-		makeBody();
-		sb.append("</table>\n");
-		closeDiv();
+		if (makeTable) {
+			openDiv("tableSecDiv");
+			sb.append("<table class=\"table table-hover\">\n");
+			makeHead();
+			makeBody();
+			sb.append("</table>\n");
+			closeDiv();
+		}
 		
 		sb.append("</div>");
 		
@@ -115,6 +139,8 @@ public class TableHelper {
 		tbody.add(line1);
 		tbody.add(line2);
 		
-		System.out.println(new TableHelper(thead, tbody, new Time(10L, 8L, 20L)).makeHtmlTable());
+		System.out.println(new EvaluationResultHelper(thead, tbody, new Time(10.23, 8.42, 20.10)).make() + "\n");
+		//System.out.println(new EvaluationResultHelper(thead, tbody).make() + "\n");
+		//System.out.println(new EvaluationResultHelper(new Time(10.23, 8.42, 20.10)).make() + "\n");
 	}
 }

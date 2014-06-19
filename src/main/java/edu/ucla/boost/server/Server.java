@@ -14,6 +14,7 @@ import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.ConfUtil;
 import edu.ucla.boost.common.Log;
 import edu.ucla.boost.common.Time;
+import edu.ucla.boost.common.TimeUtil;
 import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.jdbc.JdbcClient;
 import edu.ucla.boost.web.Asset;
@@ -66,7 +67,49 @@ public class Server extends NanoHTTPD {
 						rs = client.executeSQL(sql);
 					}
 					return new Response(Status.OK, Type.MIME_HTML,
-							PageHelper.makeTable(rs, params, new Time(10L, 8L, 20L)));
+							PageHelper.makeTable(rs, params));
+				} else if (uri.equals("/compare")) {
+					//support batch execution
+					List<String> sqls = params.getQueryList();
+					JdbcClient client = new JdbcClient();
+					ResultSet rs = null;
+					
+					String selectSQL = null;
+					for (String sql: sqls) {
+						if (sql.startsWith("select")) {
+							selectSQL = sql;
+							continue;
+						}
+						rs = client.executeSQL(sql);
+					}
+					
+					double abmTime = 0.0;
+					double closeFormTime = 0.0;
+					double vanillaTime = 0.0;
+					if (selectSQL != null) {
+						Log.log("run vanilla bootstrap ...");
+						client.closeABM();
+						TimeUtil.start();
+						client.executeSQL(selectSQL);
+						vanillaTime = TimeUtil.getPassedSeconds();
+						
+						Log.log("run abm ...");
+						client.openABM();
+						TimeUtil.start();
+						client.executeSQL(selectSQL);
+						abmTime = TimeUtil.getPassedSeconds();
+						
+						Log.log("run closed form ...");
+						client.openABM();
+						TimeUtil.start();
+						rs = client.executeSQL(selectSQL);
+						closeFormTime = TimeUtil.getPassedSeconds();
+					} else {
+						return null;
+					}
+					
+					return new Response(Status.OK, Type.MIME_HTML,
+							PageHelper.makeAll(rs, params, new Time(abmTime, closeFormTime, vanillaTime)));
 				} else if (uri.equals("/plan")) {
 					//Log.log("require query plan");
 					List<String> sqls = params.getQueryList();

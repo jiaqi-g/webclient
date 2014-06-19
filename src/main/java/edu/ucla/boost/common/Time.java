@@ -1,11 +1,11 @@
 package edu.ucla.boost.common;
 
 public class Time {
-	public Long abmTime;
-	public Long closeFormTime;
-	public Long vanillaTime;
+	public double abmTime;
+	public double closeFormTime;
+	public double vanillaTime;
 	
-	public Time(Long abmTime, Long closeFormTime, Long vanillaTime) {
+	public Time(double abmTime, double closeFormTime, double vanillaTime) {
 		super();
 		this.abmTime = abmTime;
 		this.closeFormTime = closeFormTime;

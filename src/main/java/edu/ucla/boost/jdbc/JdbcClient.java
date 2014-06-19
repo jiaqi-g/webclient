@@ -13,6 +13,7 @@ import edu.ucla.boost.common.Log;
 
 public class JdbcClient {
 	private static String driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
+	
 	private Connection con = null;
 	private Statement stmt = null;
 
@@ -42,6 +43,16 @@ public class JdbcClient {
 	return stmt.executeQuery(prepareSQL(sql));
 	}
 
+	public void openABM() throws SQLException {
+		String sql = "set hive.abm=true";
+		executeSQL(sql);
+	}
+	
+	public void closeABM() throws SQLException {
+		String sql = "set hive.abm=false";
+		executeSQL(sql);
+	}
+	
 	public static String getPrettyResult(ResultSet rs) throws SQLException {
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
