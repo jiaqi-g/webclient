@@ -39,19 +39,22 @@ public class JdbcClient {
 	}
 
 	public ResultSet executeSQL(String sql) throws SQLException {;
-		//if (sql.startsWith("select")) {
-		return stmt.executeQuery(prepareSQL(sql));
-		//}
-		//return null;
+	return stmt.executeQuery(prepareSQL(sql));
 	}
 
 	public static String getPrettyResult(ResultSet rs) throws SQLException {
-		StringBuilder res = new StringBuilder();
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
 		//res.append("**Result:**\n");
 
-		int index = 0;
+		//		int rowCount = 0;
+		//		if (rs.last()) {
+		//			rowCount = rs.getRow();
+		//			Log.log("ResultSetSize: " + rowCount);
+		//			rs.beforeFirst(); // not rs.first() because the rs.next() below will move on, missing the first element
+		//		}
+
+		StringBuilder res = new StringBuilder();
 		while (rs.next()) {
 			//column count starts from 1
 			for (int i=1; i<=columnCount; i++) {
@@ -65,13 +68,12 @@ public class JdbcClient {
 				res.append(", ");
 			}
 			res.append("\n");
-			index += 1;
 		}
-		
+
 		//Log.log("result length: " + index);
 		return res.toString();
 	}
-	
+
 	public static String getPlanResult(ResultSet rs) throws SQLException {
 		StringBuilder res = new StringBuilder();
 		int columnCount = rs.getMetaData().getColumnCount();
@@ -94,57 +96,57 @@ public class JdbcClient {
 		Log.log(sql);
 		return sql;
 	}
-	
+
 	public static void main(String[] args) throws SQLException {
 		//JdbcClient.load();
-//		
-//		JdbcClient client = new JdbcClient();
-//		
-//		String tableName = "test";
-//		String sql = null;
-//		ResultSet res = null;
-//		
-//		//start sql execution
-//		sql = "set hive.abm = false";
-//		client.executeSQL(sql);
-//		
-//		sql = "drop table " + tableName;
-//		client.executeSQL(sql);
-//		
-//		sql = "drop table " + tableName;
-//		client.executeSQL(sql);
-//
-//		sql = "create table " + tableName+ " (empid int, name string) ROW FORMAT DELIMITED FIELDS TERMINATED BY " +   "\",\"";
-//		client.executeSQL(sql);
-//
-//		//sql = "show tables '" + tableName + "'";
-//		//sql = "show tables";
-//		sql = "explain select * from test";
-//		res = client.executeSQL(sql);
-//		System.out.println(getPlanResult(res));
-//		
-//		// describe table
-//		sql = "describe " + tableName;
-//		res = client.executeSQL(sql);
-//		System.out.println(getPrettyResult(res));
-//
-//		// load data into table
-//		// NOTE: filepath has to be local to the hive server
-//		String filepath = "/home/victor/emp_data.txt";
-//		sql = "load data local inpath '" + filepath + "' into table " + tableName;
-//		res = client.executeSQL(sql);
-//		System.out.println(getPrettyResult(res));
-//
-//		// select * query
-//		sql = "select * from " + tableName;
-//		res = client.executeSQL(sql);
-//		System.out.println(getPrettyResult(res));
-//
-//		// regular hive query  
-//		sql = "select count(1) from " + tableName;
-//		res = client.executeSQL(sql);
-//		System.out.println(getPrettyResult(res));
-		
+		//		
+		//		JdbcClient client = new JdbcClient();
+		//		
+		//		String tableName = "test";
+		//		String sql = null;
+		//		ResultSet res = null;
+		//		
+		//		//start sql execution
+		//		sql = "set hive.abm = false";
+		//		client.executeSQL(sql);
+		//		
+		//		sql = "drop table " + tableName;
+		//		client.executeSQL(sql);
+		//		
+		//		sql = "drop table " + tableName;
+		//		client.executeSQL(sql);
+		//
+		//		sql = "create table " + tableName+ " (empid int, name string) ROW FORMAT DELIMITED FIELDS TERMINATED BY " +   "\",\"";
+		//		client.executeSQL(sql);
+		//
+		//		//sql = "show tables '" + tableName + "'";
+		//		//sql = "show tables";
+		//		sql = "explain select * from test";
+		//		res = client.executeSQL(sql);
+		//		System.out.println(getPlanResult(res));
+		//		
+		//		// describe table
+		//		sql = "describe " + tableName;
+		//		res = client.executeSQL(sql);
+		//		System.out.println(getPrettyResult(res));
+		//
+		//		// load data into table
+		//		// NOTE: filepath has to be local to the hive server
+		//		String filepath = "/home/victor/emp_data.txt";
+		//		sql = "load data local inpath '" + filepath + "' into table " + tableName;
+		//		res = client.executeSQL(sql);
+		//		System.out.println(getPrettyResult(res));
+		//
+		//		// select * query
+		//		sql = "select * from " + tableName;
+		//		res = client.executeSQL(sql);
+		//		System.out.println(getPrettyResult(res));
+		//
+		//		// regular hive query  
+		//		sql = "select count(1) from " + tableName;
+		//		res = client.executeSQL(sql);
+		//		System.out.println(getPrettyResult(res));
+
 		//		String q1="CREATE TABLE one AS SELECT 1 AS one FROM " +  tableName  + " LIMIT 1";
 		//		int rows=0;
 		//		String c1="";

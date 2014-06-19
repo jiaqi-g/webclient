@@ -13,6 +13,7 @@ import java.util.List;
 import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.ConfUtil;
 import edu.ucla.boost.common.Log;
+import edu.ucla.boost.common.Time;
 import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.jdbc.JdbcClient;
 import edu.ucla.boost.web.Asset;
@@ -64,7 +65,8 @@ public class Server extends NanoHTTPD {
 					for (String sql: sqls) {
 						rs = client.executeSQL(sql);
 					}
-					return new Response(Status.OK, Type.MIME_HTML, PageHelper.makeTable(rs, params));
+					return new Response(Status.OK, Type.MIME_HTML,
+							PageHelper.makeTable(rs, params, new Time(10L, 8L, 20L)));
 				} else if (uri.equals("/plan")) {
 					//Log.log("require query plan");
 					List<String> sqls = params.getQueryList();
