@@ -23,6 +23,8 @@ import edu.ucla.boost.web.VanillaBootstrapRunner;
 
 public class Server extends NanoHTTPD {
 
+	protected Thread t = null;
+	
 	public Server() {
 		super(Conf.port);
 	}
@@ -147,14 +149,19 @@ public class Server extends NanoHTTPD {
 						//TODO fix me
 						double abmTime = 5; 
 						
-						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(55, selectSQL, Conf.websitePath + "/", abmTime);
-						new Thread(runner).start();
+						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(100, selectSQL, Conf.websitePath + "/", abmTime);
+						t = new Thread(runner);
+						t.start();
 					}
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				} else if (uri.contains(".txt")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
+				} else if (uri.contains("stopInterval")) {
+					if(t != null) {
+						t.interrupt();
+					}
 				}
 				else {
 					//Log.log("Opening file "+ uri.substring(1));

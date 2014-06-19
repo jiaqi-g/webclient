@@ -28,9 +28,9 @@ public class VanillaBootstrapRunner implements Runnable {
 		double vanillaTime = 0;
 		try {
 	   
-		    while(current < limit) {
+		    while(current <= limit && !Thread.interrupted()) {
 
-				if(current%5 == 0) {
+				if(current%2 == 0) {
 					// write to disk
 					PrintWriter writer = new PrintWriter(path + "tmp.txt");
 					// System.out.println(current + "," + vanillaTime);
@@ -46,11 +46,10 @@ public class VanillaBootstrapRunner implements Runnable {
 				
 			}
 			client.close();
-			
-			
 		}
 		catch (Exception e) {
       e.printStackTrace();
+      return;
     }
 	  
   }
