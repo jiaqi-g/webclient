@@ -21,11 +21,13 @@ public class Asset {
 				// replace the file name to upper case
 				System.out.println(uri);
 				String[] tokens = uri.split("/");
+				String upperURI = "";
 				for(String token:tokens) {
-					System.out.print(token + ",");
+					upperURI += "/" + token;
 				}
+				uri = upperURI;
 			}
-			
+
 			is = new FileInputStream(Conf.websitePath + uri);
 			//is.close(); 
 		} catch (FileNotFoundException e) {

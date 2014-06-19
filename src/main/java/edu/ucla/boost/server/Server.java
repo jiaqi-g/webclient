@@ -43,7 +43,7 @@ public class Server extends NanoHTTPD {
 		try {
 			if (uri != null) {
 				
-				System.out.println(uri);
+				// System.out.println(uri);
 				
 				if (uri.contains("favicon")) return null;
 
@@ -128,7 +128,8 @@ public class Server extends NanoHTTPD {
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
-				} else if (uri.equals("/execVanilla")) {
+				} else if (uri.contains("/vallina/")) {
+					System.out.println("We are here!");
 					List<String> sqls = params.getQueryList();
 					JdbcClient client = new JdbcClient();
 					String selectSQL = null;
