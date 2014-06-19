@@ -19,6 +19,7 @@ import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.jdbc.JdbcClient;
 import edu.ucla.boost.web.Asset;
 import edu.ucla.boost.web.Type;
+import edu.ucla.boost.web.VanillaBootstrapRunner;
 
 public class Server extends NanoHTTPD {
 
@@ -41,6 +42,9 @@ public class Server extends NanoHTTPD {
 		InputStream mbuffer = null;
 		try {
 			if (uri != null) {
+				
+				System.out.println(uri);
+				
 				if (uri.contains("favicon")) return null;
 
 				if (uri.contains(".js")) {
@@ -124,6 +128,23 @@ public class Server extends NanoHTTPD {
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
+				} else if (uri.equals("/execVanilla")) {
+					List<String> sqls = params.getQueryList();
+					JdbcClient client = new JdbcClient();
+					String selectSQL = null;
+					for (String sql: sqls) {
+						if (sql.startsWith("select")) {
+							selectSQL = sql;
+							continue;
+						}
+						client.executeSQL(sql);
+					}
+					if (selectSQL != null) {
+						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(20,selectSQL);
+						new Thread(runner).start();
+					}
+					mbuffer = Asset.openDefault();
+					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				}
 				else {
 					//Log.log("Opening file "+ uri.substring(1));
