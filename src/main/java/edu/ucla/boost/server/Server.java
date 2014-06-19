@@ -125,7 +125,7 @@ public class Server extends NanoHTTPD {
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
-				} else if (uri.contains("vallina")) {
+				} else if (uri.contains("vanilla")) {
 					System.out.println("We are here!");
 					
 					//TODO fix here
