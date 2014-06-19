@@ -139,8 +139,10 @@ public class Server extends NanoHTTPD {
 //						}
 //						client.executeSQL(sql);
 //					}
-					
-					String selectSQL = "select count(*) from nation;";
+
+					// TODO fix me
+					double abmTime = 10; 
+					String selectSQL = "select count(*) from lineitem_5";
 					
 					if (selectSQL != null) {
 						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(20,selectSQL);
