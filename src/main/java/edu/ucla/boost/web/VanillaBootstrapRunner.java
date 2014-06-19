@@ -28,14 +28,8 @@ public class VanillaBootstrapRunner implements Runnable {
 		double vanillaTime = 0;
 		try {
 	   
-			while(current < limit) {
-				current ++;
-				
-		    client.closeABM();
-		    TimeUtil.start();
-		    client.executeSQL(sql);
-				vanillaTime += TimeUtil.getPassedSeconds();
-				
+		    while(current < limit) {
+
 				if(current%5 == 0) {
 					// write to disk
 					PrintWriter writer = new PrintWriter(path + "tmp.txt");
@@ -43,6 +37,13 @@ public class VanillaBootstrapRunner implements Runnable {
 					writer.write(current + "," + vanillaTime + "," + abmTime);
 					writer.close();
 				}
+				current ++;
+				
+		    client.closeABM();
+		    TimeUtil.start();
+		    client.executeSQL(sql);
+				vanillaTime += TimeUtil.getPassedSeconds();
+				
 			}
 			client.close();
 			

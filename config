@@ -1,8 +1,8 @@
 # need to specify
-connectDB = false
+connectDB = true
 debug = true
 user = victor
-websitePath = /home/victor/boost_website
+websitePath = /home/sgao/abm_web/boost_website
 serverName = 131.179.64.66
 remotePlanFile = hadoop-user@131.179.64.66:~/sharks/boost/shark/json_plan.txt
 planFile = json_plan.txt

@@ -43,7 +43,7 @@ public class Server extends NanoHTTPD {
 		try {
 			if (uri != null) {
 				
-				// System.out.println(uri);
+				System.out.println(uri);
 				
 				if (uri.contains("favicon")) return null;
 
@@ -145,9 +145,9 @@ public class Server extends NanoHTTPD {
 					if (selectSQL != null) {
 						
 						//TODO fix me
-						double abmTime = 10; 
+						double abmTime = 5; 
 						
-						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(40, selectSQL, Conf.websitePath, abmTime);
+						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(55, selectSQL, Conf.websitePath + "/", abmTime);
 						new Thread(runner).start();
 					}
 					mbuffer = Asset.open(uri);
