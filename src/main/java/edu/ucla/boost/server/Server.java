@@ -56,9 +56,6 @@ public class Server extends NanoHTTPD {
 				} else if (uri.contains(".png")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PNG, mbuffer); 
-				} else if (uri.contains(".txt")) {
-					mbuffer = Asset.open(uri);
-					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains(".htm") || uri.contains(".html")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
@@ -128,7 +125,7 @@ public class Server extends NanoHTTPD {
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
-				} else if (uri.contains("/vallina/")) {
+				} else if (uri.contains("vallina")) {
 					System.out.println("We are here!");
 					List<String> sqls = params.getQueryList();
 					JdbcClient client = new JdbcClient();
@@ -144,8 +141,11 @@ public class Server extends NanoHTTPD {
 						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(20,selectSQL);
 						new Thread(runner).start();
 					}
-					mbuffer = Asset.openDefault();
+					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
+				} else if (uri.contains(".txt")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				}
 				else {
 					//Log.log("Opening file "+ uri.substring(1));

@@ -19,7 +19,7 @@ public class Asset {
 			
 			if(uri.contains(".txt")) {
 				// replace the file name to upper case
-				System.out.println(uri);
+				// System.out.println(uri);
 				String[] tokens = uri.split("/");
 				String upperURI = "";
 				for(String token:tokens) {
