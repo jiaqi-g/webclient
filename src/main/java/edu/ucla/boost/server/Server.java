@@ -127,16 +127,21 @@ public class Server extends NanoHTTPD {
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains("vallina")) {
 					System.out.println("We are here!");
-					List<String> sqls = params.getQueryList();
-					JdbcClient client = new JdbcClient();
-					String selectSQL = null;
-					for (String sql: sqls) {
-						if (sql.startsWith("select")) {
-							selectSQL = sql;
-							continue;
-						}
-						client.executeSQL(sql);
-					}
+					
+					//TODO fix here
+//					List<String> sqls = params.getQueryList();
+//					JdbcClient client = new JdbcClient();
+//					String selectSQL = null;
+//					for (String sql: sqls) {
+//						if (sql.startsWith("select")) {
+//							selectSQL = sql;
+//							continue;
+//						}
+//						client.executeSQL(sql);
+//					}
+					
+					String selectSQL = "select count(*) from nation;";
+					
 					if (selectSQL != null) {
 						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(20,selectSQL);
 						new Thread(runner).start();
