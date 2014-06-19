@@ -16,6 +16,16 @@ public class Asset {
 	public static InputStream open(String uri) {
 		InputStream is = null;
 		try {
+			
+			if(uri.contains(".txt")) {
+				// replace the file name to upper case
+				System.out.println(uri);
+				String[] tokens = uri.split("/");
+				for(String token:tokens) {
+					System.out.print(token + ",");
+				}
+			}
+			
 			is = new FileInputStream(Conf.websitePath + uri);
 			//is.close(); 
 		} catch (FileNotFoundException e) {
