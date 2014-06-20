@@ -15,6 +15,7 @@ import edu.ucla.boost.common.Param;
 import edu.ucla.boost.common.Time;
 import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.math.Confidence;
+import edu.ucla.boost.math.NormalDist;
 import edu.ucla.boost.math.Quantile;
 
 public class PageHelper {
@@ -74,20 +75,20 @@ public class PageHelper {
 		}
 		return res.toString();
 	}
-	
+
 	public static String makeAll(ResultSet rs, ParamUtil params, Time time)  throws SQLException {
 		EvaluationResultHelper eval = new EvaluationResultHelper();
 		setTable(rs, params, eval);
 		setTime(time, eval);
 		return eval.make();
 	}
-	
+
 	public static String makeTable(ResultSet rs, ParamUtil params)  throws SQLException {
 		EvaluationResultHelper eval = new EvaluationResultHelper();
 		setTable(rs, params, eval);
 		return eval.make();
 	}
-	
+
 	private static void setTime(Time time, EvaluationResultHelper eval) throws SQLException {
 		eval.setTime(time);
 	}
@@ -106,28 +107,28 @@ public class PageHelper {
 			head.add(rs.getMetaData().getColumnName(i));
 		}
 
-		boolean doVariance = params.doVariance();
-		boolean doExist = params.doExist();
-		boolean doQuantile = params.doQuantile();
-		boolean doConfidence = params.doConfidence();
-
-		if (doVariance) {
-			head.add(Param.VARIANCE_COLUMN_NAME);
-		}
-		if (doExist) {
-			head.add(Param.EXIST_COLUMN_NAME);
-		}
-		if (doQuantile) {
-			Quantile quantile = params.getQuantile();
-			head.add(Param.QUANTILE_COLUMN_NAME + "_" + quantile.getQuantile() + "%");
-		}
-		if (doConfidence) {
-			Confidence confidence = params.getConfidence();
-			head.add(Param.CONFIDENCE_COLUMN_NAME + "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)");
-		}
+		//		boolean doVariance = params.doVariance();
+		//		boolean doExist = params.doExist();
+		//		boolean doQuantile = params.doQuantile();
+		//		boolean doConfidence = params.doConfidence();
+		//
+		//		if (doVariance) {
+		//			head.add(Param.VARIANCE_COLUMN_NAME);
+		//		}
+		//		if (doExist) {
+		//			head.add(Param.EXIST_COLUMN_NAME);
+		//		}
+		//		if (doQuantile) {
+		//			Quantile quantile = params.getQuantile();
+		//			head.add(Param.QUANTILE_COLUMN_NAME + "_" + quantile.getQuantile() + "%");
+		//		}
+		//		if (doConfidence) {
+		//			Confidence confidence = params.getConfidence();
+		//			head.add(Param.CONFIDENCE_COLUMN_NAME + "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)");
+		//		}
 
 		//construct body
-		
+
 		//		int rowCount = 0;
 		//		if (rs.last()) {
 		//			rowCount = rs.getRow();
@@ -136,8 +137,9 @@ public class PageHelper {
 		//		}
 
 		//if (rowCount < Conf.resultSetSizeLimit) {
-		
+		List<NormalDist> dists = new ArrayList<NormalDist>();
 		List<List<Object>> body = new ArrayList<List<Object>>();
+
 		while (rs.next()) {
 			List<Object> row = new ArrayList<Object>();
 			//column count starts from 1
@@ -152,22 +154,22 @@ public class PageHelper {
 					row.add("null");
 				}
 			}
-
-			//TODO: do not need this in really
-			if (doVariance) {
-				row.add("");
-			}
-			if (doExist) {
-				row.add("");
-			}
-			if (doQuantile) {
-				row.add("");
-			}
-			if (doConfidence) {
-				row.add("");
-			}
+			//			if (doVariance) {
+			//				row.add("");
+			//			}
+			//			if (doExist) {
+			//				row.add("");
+			//			}
+			//			if (doQuantile) {
+			//				row.add("");
+			//			}
+			//			if (doConfidence) {
+			//				row.add("");
+			//			}
 
 			body.add(row);
+			//TODO: reflect actual dists read from result set
+			dists.add(new NormalDist(0,1));
 		}
 		//		} else {
 		//			List<Object> row = new ArrayList<Object>();
@@ -176,7 +178,7 @@ public class PageHelper {
 		//		}
 
 		//Log.log("result length: " + body.size());
-		eval.setTable(head, body);
+		eval.setTable(head, body, dists);
 	}
 	
 	public static String makeOutlinePage(String res) {
@@ -186,5 +188,4 @@ public class PageHelper {
 	public static void main(String[] args) {
 		//System.out.println(convertMarkdownToHtml("``` java \n if (a > 3) {\n     moveShip(5 * gravity, DOWN); \n } \n```"));
 	}
-	
 }

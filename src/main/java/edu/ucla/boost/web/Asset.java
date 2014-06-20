@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import edu.ucla.boost.common.Conf;
+import edu.ucla.boost.common.FileSystem;
 import edu.ucla.boost.common.Log;
 import edu.ucla.boost.common.Scp;
 
@@ -40,23 +41,35 @@ public class Asset {
 		return open(defaultPage);
 	}
 	
-	public static InputStream getPlan(boolean isEligible, String exception) {
-		if (isEligible) {
+	public static InputStream getPlan(boolean isAbmEligible, boolean isCloseEligible, boolean isBootstrapEligible) throws IOException {
+		String plan = "none";
+		if (isAbmEligible) {
 			//copy plan file from remote machine
-			String s = Scp.execute(Conf.remotePlanFile, Conf.planFile);
-			Log.log(s);
-			
-			InputStream is = null;
-			try {
-				is = new FileInputStream(Conf.planFile);
-				//is.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			return is;
-		} else {
-			String str = "exception: " + exception;
-			return new ByteArrayInputStream(str.getBytes());
+			Scp.execute(Conf.remotePlanFile, Conf.planFile);
+			plan = FileSystem.readFileAsString(Conf.planFile);
+			Log.log("JsonPlan From Remote: " + plan);
 		}
+		
+		String notice = "";
+		if (isAbmEligible) {
+			notice += "Safe for abm;\n";
+		} else {
+			notice += "Unsafe for abm;\n";
+		}
+		
+		if (isCloseEligible) {
+			notice += "Safe for closed form;\n";
+		} else {
+			notice += "Unsafe for closed form;\n";
+		}
+		
+		if (isBootstrapEligible) {
+			notice += "Safe for vanilla bootstrap;\n";
+		} else {
+			notice += "Unsafe for vanilla bootstrap;\n";
+		}
+		
+		String rs = notice + plan;
+		return new ByteArrayInputStream(rs.getBytes());
 	}
 }

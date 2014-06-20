@@ -4,31 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.ucla.boost.common.Time;
+import edu.ucla.boost.math.NormalDist;
 
 public class EvaluationResultHelper {
 	List<Object> thead;
 	List<List<Object>> tbody;
+	List<NormalDist> dists;
+	
 	StringBuilder sb;
 	Time time;
-	boolean makeTable = true;
-	boolean makeTime = true;
-	
-	public EvaluationResultHelper(List<Object> head, List<List<Object>> body, Time time) {
-		this.thead = head;
-		this.tbody = body;
-		this.time = time;
-		makeTable = true;
-		makeTime = true;
-	}
+	boolean makeTable = false;
+	boolean makeTime = false;
 	
 	public EvaluationResultHelper() {
-		makeTable = false;
-		makeTime = false;
 	}
 	
-	public void setTable(List<Object> head, List<List<Object>> body) {
+	public void setTable(List<Object> head, List<List<Object>> body, List<NormalDist> dists) {
 		this.thead = head;
 		this.tbody = body;
+		this.dists = dists;
 		makeTable = true;
 	}
 	
@@ -49,32 +43,34 @@ public class EvaluationResultHelper {
 		sb.append("</th>\n");
 	}
 	
-	private void makeTr(int index, List<Object> row, boolean isHead) {
-		sb.append("<tr>\n");
+	private void makeTr(int index, List<Object> row, boolean isHead, NormalDist dist) {
 		if (isHead) {
+			sb.append("<tr>\n");
 			makeTh("#");
 			for (Object obj: row) {
 				makeTh(obj);
 			}
+			sb.append("</tr>\n");
 		} else {
+			sb.append("<tr class=\"tpchrow\" href=\"#\" title=\"" + dist.toString() + "\">\n");
 			makeTd(index);
 			for (Object obj: row) {
 				makeTd(obj);
 			}
-		}		
-		sb.append("</tr>\n");
+			sb.append("</tr>\n");
+		}
 	}
 	
 	private void makeHead() {
 		sb.append("<thead>\n");
-		makeTr(0, thead, true);
+		makeTr(0, thead, true, null);
 		sb.append("</thead>\n");
 	}
 	
 	private void makeBody() {
 		sb.append("<tbody>\n");
 		for (int i=0; i<tbody.size(); i++) {
-			makeTr(i+1, tbody.get(i), false);
+			makeTr(i+1, tbody.get(i), false, dists.get(i));
 		}
 		sb.append("</tbody>\n");
 	}
@@ -139,7 +135,15 @@ public class EvaluationResultHelper {
 		tbody.add(line1);
 		tbody.add(line2);
 		
-		System.out.println(new EvaluationResultHelper(thead, tbody, new Time(10.23, 8.42, 20.10)).make() + "\n");
+		EvaluationResultHelper eval = new EvaluationResultHelper();
+		
+		List<NormalDist> dists = new ArrayList<NormalDist>();
+		for (int i=0; i<tbody.size(); i++) {
+			dists.add(new NormalDist(0,1));
+		}
+		eval.setTable(thead, tbody, dists);
+		
+		System.out.println(eval.make() + "\n");
 		//System.out.println(new EvaluationResultHelper(thead, tbody).make() + "\n");
 		//System.out.println(new EvaluationResultHelper(new Time(10.23, 8.42, 20.10)).make() + "\n");
 	}

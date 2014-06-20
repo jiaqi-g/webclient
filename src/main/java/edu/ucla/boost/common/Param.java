@@ -17,8 +17,9 @@ public class Param {
 	 * You can change following values as you want
 	 */
 	public static final String VARIANCE_COLUMN_NAME = "variance";
+	public static final String MEAN_COLUMN_NAME = "mean";
+	
 	public static final String EXIST_COLUMN_NAME = "existence";
 	public static final String QUANTILE_COLUMN_NAME = "quantile";
 	public static final String CONFIDENCE_COLUMN_NAME = "confidence";
-	
 }

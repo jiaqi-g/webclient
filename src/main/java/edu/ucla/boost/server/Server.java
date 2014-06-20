@@ -112,22 +112,31 @@ public class Server extends NanoHTTPD {
 					List<String> sqls = params.getQueryList();
 					JdbcClient client = new JdbcClient();
 					//only execute "select" here, potential bugs for not executing "set"
-					boolean isEligible = true;
-					String exception = "";
+					boolean isAbmEligible = true;
+					boolean isCloseEligible = true;
+					boolean isBootstrapEligible = true;
+					
+					//String exception = "";
 					for (String sql: sqls) {
 						if (sql.toLowerCase().startsWith("select")) {
+							if (sql.toLowerCase().contains("min") || sql.toLowerCase().contains("max")) {
+								isBootstrapEligible = false;
+							}
+							
 							try {
 								client.executeSQL("explain " + sql);
 							}
 							catch (SQLException e) {
-								isEligible = false;
-								String[] arrs = e.getMessage().split(":");
-								exception = arrs[arrs.length - 1].trim();
+								isAbmEligible = false;
+								isCloseEligible = false;
+								//String[] arrs = e.getMessage().split(":");
+								//exception = arrs[arrs.length - 1].trim();
 								e.printStackTrace();
 							}
 						}
 					}
-					mbuffer = Asset.getPlan(isEligible, exception);
+					
+					mbuffer = Asset.getPlan(isAbmEligible, isCloseEligible, isBootstrapEligible);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);
