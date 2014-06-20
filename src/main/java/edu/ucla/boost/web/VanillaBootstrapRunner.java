@@ -12,7 +12,7 @@ public class VanillaBootstrapRunner implements Runnable {
 	String sql;
 	String path;
 	JdbcClient client;
-	
+
 	public VanillaBootstrapRunner(int limit, String sql, String path, double abmTime) {
 		this.limit = limit;
 		this.current = 0;
@@ -21,40 +21,33 @@ public class VanillaBootstrapRunner implements Runnable {
 		this.client = new JdbcClient();
 		this.abmTime = abmTime;
 	}
-	
+
 	@Override
-  public void run() {
-		
+	public void run() {
+		System.out.println("called");
 		double vanillaTime = 0;
 		try {
-	   
-		    while(current <= limit && !Thread.interrupted()) {
-
-				if(current%2 == 0) {
+			while(current <= limit && !Thread.interrupted()) {
+				if(current % 2 == 0) {
 					// write to disk
 					PrintWriter writer = new PrintWriter(path + "tmp.txt");
 					// System.out.println(current + "," + vanillaTime);
 					writer.write(current + "," + vanillaTime + "," + abmTime);
 					writer.close();
 				}
-				current ++;
-				
-		    client.closeABM();
-		    TimeUtil.start();
-		    client.executeSQL(sql);
+				current++;
+
+				client.closeABM();
+				TimeUtil.start();
+				client.executeSQL(sql);
+				System.out.println("called");
 				vanillaTime += TimeUtil.getPassedSeconds();
-				
 			}
 			client.close();
 		}
 		catch (Exception e) {
-      e.printStackTrace();
-      return;
-    }
-	  
-  }
-
-	
-	
-	
+			e.printStackTrace();
+			return;
+		}
+	}
 }

@@ -34,13 +34,6 @@ public class Server extends NanoHTTPD {
 	public Response serve(IHTTPSession session) {
 		String uri = session.getUri();
 		ParamUtil params = new ParamUtil(session.getParms());
-		//Method method = session.getMethod();
-		//		Map<String, String> header = session.getHeaders();
-
-		//Log.d(TAG,"SERVE ::  URI "+uri);
-		//		final StringBuilder buf = new StringBuilder();
-		//		for (Entry<String, String> kv : header.entrySet())
-		//			buf.append(kv.getKey() + " : " + kv.getValue() + "\n");
 
 		InputStream mbuffer = null;
 		try {
@@ -140,42 +133,41 @@ public class Server extends NanoHTTPD {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains("vanilla")) {
-
-					//TODO fix here
-					//					List<String> sqls = params.getQueryList();
-					//					JdbcClient client = new JdbcClient();
-					//					String selectSQL = null;
-					//					for (String sql: sqls) {
-					//						if (sql.startsWith("select")) {
-					//							selectSQL = sql;
-					//							continue;
-					//						}
-					//						client.executeSQL(sql);
-					//					}
-
-					// TODO fix me
-					String selectSQL = "select count(*) from lineitem_2";
+					//support batch execution
+					List<String> sqls = params.getQueryList();
+					JdbcClient client = new JdbcClient();
+					
+					String selectSQL = null;
+					for (String sql: sqls) {
+						if (sql.startsWith("select")) {
+							selectSQL = sql;
+							break;
+						}
+					}
+					
+					client.openABM();
+					TimeUtil.start();
+					client.executeSQL(selectSQL);
+					double abmTime = TimeUtil.getPassedSeconds();
 
 					if (selectSQL != null) {
-
-						//TODO fix me
-						double abmTime = 5; 
-
 						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(100, selectSQL, Conf.websitePath + "/", abmTime);
 						t = new Thread(runner);
 						t.start();
+						mbuffer = Asset.open(uri);
+						return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 					}
-					mbuffer = Asset.open(uri);
-					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
-				} else if (uri.contains(".txt")) {
-					mbuffer = Asset.open(uri);
-					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
+					else {
+						return null;
+					}
 				} else if (uri.contains("stopInterval")) {
 					if(t != null) {
 						t.interrupt();
 					}
-				}
-				else {
+				} else if (uri.contains(".txt")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
+				} else {
 					//Log.log("Opening file "+ uri.substring(1));
 					Log.log("Can not find MIME type for " + uri + ", open default page.");
 
