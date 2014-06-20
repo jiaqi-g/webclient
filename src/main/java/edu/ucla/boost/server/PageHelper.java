@@ -167,6 +167,8 @@ public class PageHelper {
 		dists.add(new NormalDist(fmean,fvariance));
 		
 		boolean colTag = (headFlags.size() == columnCount);
+		System.out.println(headFlags.size() + " " + columnCount + " " + colTag);
+		
 		
 		for(int i = 1; i <= columnCount; i ++) {
 			String colName = rs.getMetaData().getColumnName(i);
@@ -178,6 +180,15 @@ public class PageHelper {
 				}
 			}
 		}
+		
+		for(Object headName:head) {
+			System.out.print(head + "\t");
+		}
+		System.out.println();
+		for(boolean headflag:headFlags) {
+			System.out.print(headflag + "\t");
+		}
+		System.out.println();
 
 		while (rs.next()) {
 			List<Object> row = new ArrayList<Object>();
