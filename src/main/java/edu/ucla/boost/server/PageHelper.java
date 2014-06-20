@@ -143,12 +143,26 @@ public class PageHelper {
 		while (rs.next()) {
 			List<Object> row = new ArrayList<Object>();
 			//column count starts from 1
+			double mean = 0;
+			double variance = 1;
+			
 			for (int i=1; i<=columnCount; i++) {
 				Object obj = rs.getObject(i);
 
 				if (obj != null) {
-					String s = obj.toString().trim();
-					row.add(s);
+					String str = obj.toString().trim();
+					if(str.startsWith("[") && str.endsWith("]")) {
+						
+						str = str.substring(1, str.length() - 1);
+						String[] tokens = str.split(",");
+						str = tokens[2];
+						
+						mean = Double.parseDouble(tokens[2]);
+						variance = Double.parseDouble(tokens[3]);
+						
+					} else {
+						row.add(str);
+					}
 				}
 				else {
 					row.add("null");
@@ -169,7 +183,7 @@ public class PageHelper {
 
 			body.add(row);
 			//TODO: reflect actual dists read from result set
-			dists.add(new NormalDist(0,1));
+			dists.add(new NormalDist(mean,variance));
 		}
 		//		} else {
 		//			List<Object> row = new ArrayList<Object>();
