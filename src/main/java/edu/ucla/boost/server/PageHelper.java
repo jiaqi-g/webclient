@@ -160,9 +160,9 @@ public class PageHelper {
 						mean = Double.parseDouble(tokens[2]);
 						variance = Double.parseDouble(tokens[3]);
 						
-					} else {
-						row.add(str);
-					}
+					} 
+					row.add(str);
+					
 				}
 				else {
 					row.add("null");
