@@ -93,6 +93,27 @@ public class PageHelper {
 		eval.setTime(time);
 	}
 
+	
+	//		boolean doVariance = params.doVariance();
+	//		boolean doExist = params.doExist();
+	//		boolean doQuantile = params.doQuantile();
+	//		boolean doConfidence = params.doConfidence();
+	//
+	//		if (doVariance) {
+	//			head.add(Param.VARIANCE_COLUMN_NAME);
+	//		}
+	//		if (doExist) {
+	//			head.add(Param.EXIST_COLUMN_NAME);
+	//		}
+	//		if (doQuantile) {
+	//			Quantile quantile = params.getQuantile();
+	//			head.add(Param.QUANTILE_COLUMN_NAME + "_" + quantile.getQuantile() + "%");
+	//		}
+	//		if (doConfidence) {
+	//			Confidence confidence = params.getConfidence();
+	//			head.add(Param.CONFIDENCE_COLUMN_NAME + "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)");
+	//		}
+	
 	private static void setTable(ResultSet rs, ParamUtil params, EvaluationResultHelper eval) throws SQLException {
 		if (rs == null) {
 			return;
@@ -102,43 +123,61 @@ public class PageHelper {
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
 
+		// first read one line to determine the type of column
+		List<Boolean> headFlags = new ArrayList<Boolean>();
 		List<Object> head = new ArrayList<Object>();
-		for (int i=1; i<=columnCount; i++) {
-			head.add(rs.getMetaData().getColumnName(i));
-		}
-
-		//		boolean doVariance = params.doVariance();
-		//		boolean doExist = params.doExist();
-		//		boolean doQuantile = params.doQuantile();
-		//		boolean doConfidence = params.doConfidence();
-		//
-		//		if (doVariance) {
-		//			head.add(Param.VARIANCE_COLUMN_NAME);
-		//		}
-		//		if (doExist) {
-		//			head.add(Param.EXIST_COLUMN_NAME);
-		//		}
-		//		if (doQuantile) {
-		//			Quantile quantile = params.getQuantile();
-		//			head.add(Param.QUANTILE_COLUMN_NAME + "_" + quantile.getQuantile() + "%");
-		//		}
-		//		if (doConfidence) {
-		//			Confidence confidence = params.getConfidence();
-		//			head.add(Param.CONFIDENCE_COLUMN_NAME + "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)");
-		//		}
-
-		//construct body
-
-		//		int rowCount = 0;
-		//		if (rs.last()) {
-		//			rowCount = rs.getRow();
-		//			Log.log("ResultSetSize: " + rowCount);
-		//			rs.beforeFirst(); // not rs.first() because the rs.next() below will move on, missing the first element
-		//		}
-
-		//if (rowCount < Conf.resultSetSizeLimit) {
+		List<Object> firstRow = new ArrayList<Object>();
 		List<NormalDist> dists = new ArrayList<NormalDist>();
 		List<List<Object>> body = new ArrayList<List<Object>>();
+		
+		
+		double fmean = 0;
+		double fvariance = 1;
+		if(rs.next()) {
+			for (int i=1; i<=columnCount; i++) {
+				Object obj = rs.getObject(i);
+				boolean flag = false;
+				
+				if (obj != null) {
+					String str = obj.toString().trim();
+					if(str.startsWith("[") && str.endsWith("]")) {
+						
+						str = str.substring(1, str.length() - 1);
+						String[] tokens = str.split(",");
+						
+						fmean = Double.parseDouble(tokens[2]);
+						fvariance = Double.parseDouble(tokens[3]);
+						flag = true;
+						
+						firstRow.add(tokens[2]);
+						firstRow.add(tokens[0]);
+						firstRow.add(tokens[1]);
+						
+					} else {
+						firstRow.add(str);
+					}
+			} else {
+				firstRow.add("null");
+			} 
+				
+			headFlags.add(flag);
+		}
+		
+		body.add(firstRow);
+		dists.add(new NormalDist(fmean,fvariance));
+		
+		boolean colTag = (headFlags.size() == columnCount);
+		
+		for(int i = 1; i <= columnCount; i ++) {
+			String colName = rs.getMetaData().getColumnName(i);
+			head.add(colName); 
+			if(colTag) {
+				if(headFlags.get(i)) {
+					head.add(colName + "_5Pct");
+					head.add(colName + "_95Pct");
+				}
+			}
+		}
 
 		while (rs.next()) {
 			List<Object> row = new ArrayList<Object>();
@@ -155,14 +194,16 @@ public class PageHelper {
 						
 						str = str.substring(1, str.length() - 1);
 						String[] tokens = str.split(",");
-						str = tokens[2];
-						
 						mean = Double.parseDouble(tokens[2]);
 						variance = Double.parseDouble(tokens[3]);
 						
-					} 
-					row.add(str);
-					
+						row.add(tokens[2]);
+						row.add(tokens[0]);
+						row.add(tokens[1]);
+						
+					} else {
+						row.add(str);
+					}
 				}
 				else {
 					row.add("null");
@@ -182,7 +223,6 @@ public class PageHelper {
 			//			}
 
 			body.add(row);
-			//TODO: reflect actual dists read from result set
 			dists.add(new NormalDist(mean,variance));
 		}
 		//		} else {

@@ -121,18 +121,22 @@ public class Server extends NanoHTTPD {
 						if (sql.toLowerCase().startsWith("select")) {
 							if (sql.toLowerCase().contains("min") || sql.toLowerCase().contains("max")) {
 								isBootstrapEligible = false;
-							}
-							
-							try {
-								client.executeSQL("explain " + sql);
-							}
-							catch (SQLException e) {
 								isAbmEligible = false;
 								isCloseEligible = false;
-								//String[] arrs = e.getMessage().split(":");
-								//exception = arrs[arrs.length - 1].trim();
-								e.printStackTrace();
+							} else {
+								try {
+									client.executeSQL("explain " + sql);
+								}
+								catch (SQLException e) {
+									isAbmEligible = false;
+									isCloseEligible = false;
+									//String[] arrs = e.getMessage().split(":");
+									//exception = arrs[arrs.length - 1].trim();
+									e.printStackTrace();
+								}
 							}
+							
+
 						}
 					}
 					
