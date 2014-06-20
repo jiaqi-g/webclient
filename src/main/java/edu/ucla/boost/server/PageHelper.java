@@ -161,6 +161,7 @@ public class PageHelper {
 			} 
 				
 			headFlags.add(flag);
+			}
 		}
 		
 		body.add(firstRow);
@@ -236,13 +237,7 @@ public class PageHelper {
 			body.add(row);
 			dists.add(new NormalDist(mean,variance));
 		}
-		//		} else {
-		//			List<Object> row = new ArrayList<Object>();
-		//			row.add("ResultSetSize: " + rowCount + " exceeds limit " + Conf.resultSetSizeLimit);
-		//			body.add(row);
-		//		}
 
-		//Log.log("result length: " + body.size());
 		eval.setTable(head, body, dists);
 	}
 	
