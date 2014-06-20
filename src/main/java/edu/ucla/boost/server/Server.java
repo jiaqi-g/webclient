@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import edu.ucla.boost.common.Conf;
@@ -24,7 +25,7 @@ import edu.ucla.boost.web.VanillaBootstrapRunner;
 public class Server extends NanoHTTPD {
 
 	protected Thread t = null;
-	
+
 	public Server() {
 		super(Conf.port);
 	}
@@ -44,9 +45,9 @@ public class Server extends NanoHTTPD {
 		InputStream mbuffer = null;
 		try {
 			if (uri != null) {
-				
+
 				System.out.println(uri);
-				
+
 				if (uri.contains("favicon")) return null;
 
 				if (uri.contains(".js")) {
@@ -76,7 +77,7 @@ public class Server extends NanoHTTPD {
 					List<String> sqls = params.getQueryList();
 					JdbcClient client = new JdbcClient();
 					ResultSet rs = null;
-					
+
 					String selectSQL = null;
 					for (String sql: sqls) {
 						if (sql.startsWith("select")) {
@@ -85,7 +86,7 @@ public class Server extends NanoHTTPD {
 						}
 						rs = client.executeSQL(sql);
 					}
-					
+
 					double abmTime = 0.0;
 					double closeFormTime = 0.0;
 					double vanillaTime = 0.0;
@@ -95,13 +96,13 @@ public class Server extends NanoHTTPD {
 						TimeUtil.start();
 						client.executeSQL(selectSQL);
 						vanillaTime = TimeUtil.getPassedSeconds();
-						
+
 						Log.log("run abm ...");
 						client.openABM();
 						TimeUtil.start();
 						client.executeSQL(selectSQL);
 						abmTime = TimeUtil.getPassedSeconds();
-						
+
 						Log.log("run closed form ...");
 						client.openABM();
 						TimeUtil.start();
@@ -110,45 +111,56 @@ public class Server extends NanoHTTPD {
 					} else {
 						return null;
 					}
-					
+
 					return new Response(Status.OK, Type.MIME_HTML,
 							PageHelper.makeAll(rs, params, new Time(abmTime, closeFormTime, vanillaTime)));
 				} else if (uri.equals("/plan")) {
 					//Log.log("require query plan");
 					List<String> sqls = params.getQueryList();
 					JdbcClient client = new JdbcClient();
+					//only execute "select" here, potential bugs for not executing "set"
+					boolean isEligible = true;
+					String exception = "";
 					for (String sql: sqls) {
 						if (sql.toLowerCase().startsWith("select")) {
-							client.executeSQL("explain " + sql);
+							try {
+								client.executeSQL("explain " + sql);
+							}
+							catch (SQLException e) {
+								isEligible = false;
+								String[] arrs = e.getMessage().split(":");
+								exception = arrs[arrs.length - 1].trim();
+								e.printStackTrace();
+							}
 						}
 					}
-					mbuffer = Asset.getPlan();
+					mbuffer = Asset.getPlan(isEligible, exception);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains("vanilla")) {
-					
+
 					//TODO fix here
-//					List<String> sqls = params.getQueryList();
-//					JdbcClient client = new JdbcClient();
-//					String selectSQL = null;
-//					for (String sql: sqls) {
-//						if (sql.startsWith("select")) {
-//							selectSQL = sql;
-//							continue;
-//						}
-//						client.executeSQL(sql);
-//					}
+					//					List<String> sqls = params.getQueryList();
+					//					JdbcClient client = new JdbcClient();
+					//					String selectSQL = null;
+					//					for (String sql: sqls) {
+					//						if (sql.startsWith("select")) {
+					//							selectSQL = sql;
+					//							continue;
+					//						}
+					//						client.executeSQL(sql);
+					//					}
 
 					// TODO fix me
 					String selectSQL = "select count(*) from lineitem_2";
-					
+
 					if (selectSQL != null) {
-						
+
 						//TODO fix me
 						double abmTime = 5; 
-						
+
 						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(100, selectSQL, Conf.websitePath + "/", abmTime);
 						t = new Thread(runner);
 						t.start();
@@ -188,7 +200,7 @@ public class Server extends NanoHTTPD {
 			Log.warn("[Config]");	
 			ConfUtil.loadConf(path);
 		}
-		
+
 		ConfUtil.printArgs();
 		if (Conf.connectDB) {
 			JdbcClient.load();

@@ -1,5 +1,6 @@
 package edu.ucla.boost.web;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,18 +40,23 @@ public class Asset {
 		return open(defaultPage);
 	}
 	
-	public static InputStream getPlan() {
-		//copy plan file from remote machine
-		String s = Scp.execute(Conf.remotePlanFile, Conf.planFile);
-		Log.log(s);
-		
-		InputStream is = null;
-		try {
-			is = new FileInputStream(Conf.planFile);
-			//is.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+	public static InputStream getPlan(boolean isEligible, String exception) {
+		if (isEligible) {
+			//copy plan file from remote machine
+			String s = Scp.execute(Conf.remotePlanFile, Conf.planFile);
+			Log.log(s);
+			
+			InputStream is = null;
+			try {
+				is = new FileInputStream(Conf.planFile);
+				//is.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			return is;
+		} else {
+			String str = "exception: " + exception;
+			return new ByteArrayInputStream(str.getBytes());
 		}
-		return is;
 	}
 }

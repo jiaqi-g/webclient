@@ -39,8 +39,8 @@ public class JdbcClient {
 		}
 	}
 
-	public ResultSet executeSQL(String sql) throws SQLException {;
-	return stmt.executeQuery(prepareSQL(sql));
+	public ResultSet executeSQL(String sql) throws SQLException {
+		return stmt.executeQuery(prepareSQL(sql));
 	}
 
 	public void openABM() throws SQLException {
