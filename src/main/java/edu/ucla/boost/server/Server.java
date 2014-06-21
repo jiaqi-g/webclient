@@ -37,6 +37,10 @@ public class Server extends NanoHTTPD {
 		execTime = 0;
 		
 		try {
+			
+			// TODO
+			// set select, set N
+			
 			for(String sql:sqls) {
 				if(sql.startsWith("--")) {
 		        client.executeSQL(sql.replace("--", "").trim());
@@ -63,7 +67,7 @@ public class Server extends NanoHTTPD {
 
 				System.out.println(uri);
 
-				if (uri.contains("favicon")) {
+				if (uri.contains("favicon") || uri.contains("http")) {
 					return null;
 				}
 				

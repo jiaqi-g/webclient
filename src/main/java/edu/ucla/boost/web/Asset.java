@@ -17,6 +17,7 @@ public class Asset {
 	
 	public static InputStream open(String uri) {
 		InputStream is = null;
+		
 		try {
 			
 			if(uri.contains(".txt")) {

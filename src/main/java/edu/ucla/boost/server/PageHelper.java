@@ -1,7 +1,6 @@
 package edu.ucla.boost.server;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,9 +8,7 @@ import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
 
-import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.Log;
-import edu.ucla.boost.common.Param;
 import edu.ucla.boost.common.Time;
 import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.math.Confidence;
@@ -93,40 +90,39 @@ public class PageHelper {
 		eval.setTime(time);
 	}
 
-	
-	//		boolean doVariance = params.doVariance();
-	//		boolean doExist = params.doExist();
-	//		boolean doQuantile = params.doQuantile();
-	//		boolean doConfidence = params.doConfidence();
-	//
-	//		if (doVariance) {
-	//			head.add(Param.VARIANCE_COLUMN_NAME);
-	//		}
-	//		if (doExist) {
-	//			head.add(Param.EXIST_COLUMN_NAME);
-	//		}
-	//		if (doQuantile) {
-	//			Quantile quantile = params.getQuantile();
-	//			head.add(Param.QUANTILE_COLUMN_NAME + "_" + quantile.getQuantile() + "%");
-	//		}
-	//		if (doConfidence) {
-	//			Confidence confidence = params.getConfidence();
-	//			head.add(Param.CONFIDENCE_COLUMN_NAME + "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)");
-	//		}
-	
+		
 	private static void setTable(ResultSet rs, ParamUtil params, EvaluationResultHelper eval) throws SQLException {
 		if (rs == null) {
 			return;
 		}
+		
+		boolean doVariance = params.doVariance();
+		boolean doQuantile = params.doQuantile();
+		boolean doConfidence = params.doConfidence();
+		String quan = null, conf = null;
+		
+		if (doQuantile) {
+				Quantile quantile = params.getQuantile();
+				quan = "_" + quantile.getQuantile() + "%";
+		}
+		if (doConfidence) {
+				Confidence confidence = params.getConfidence();
+				conf = "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)";
+		}
+		
+		System.out.println(doVariance + "\t" + doQuantile + "\t" + doConfidence);
 
 		//construct head
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
-
-		// first read one line to determine the type of column
+		
+		/*
+		 * read first row to construct head
+		 */
 		List<Boolean> headFlags = new ArrayList<Boolean>();
-		List<Object> head = new ArrayList<Object>();
 		List<Object> firstRow = new ArrayList<Object>();
+		
+		List<Object> head = new ArrayList<Object>();
 		List<NormalDist> dists = new ArrayList<NormalDist>();
 		List<List<Object>> body = new ArrayList<List<Object>>();
 		
@@ -134,24 +130,38 @@ public class PageHelper {
 		double fmean = 0;
 		double fvariance = 1;
 		if(rs.next()) {
-			for (int i=1; i<=columnCount; i++) {
+			for (int i=1; i <= columnCount; i++) {
 				Object obj = rs.getObject(i);
 				boolean flag = false;
 				
 				if (obj != null) {
 					String str = obj.toString().trim();
 					if(str.startsWith("[") && str.endsWith("]")) {
-						
+						flag = true;						
 						str = str.substring(1, str.length() - 1);
 						String[] tokens = str.split(",");
+
+						String val = null;
+						if(tokens.length == 3) {
+							val = tokens[0];
+							fmean = Double.parseDouble(tokens[1]);
+							fvariance = Double.parseDouble(tokens[2]);
+						} else if (tokens.length == 4){
+							val = "(" + tokens[0] + "," + tokens[1] + ")";
+							fmean = Double.parseDouble(tokens[2]);
+							fvariance = Double.parseDouble(tokens[3]);
+						} else {
+							System.out.println("Unknown Results");
+						}
 						
-						fmean = Double.parseDouble(tokens[2]);
-						fvariance = Double.parseDouble(tokens[3]);
-						flag = true;
 						
-						firstRow.add(tokens[2]);
-						firstRow.add(tokens[0]);
-						firstRow.add(tokens[1]);
+						firstRow.add(fmean);
+						if(doVariance) {
+							firstRow.add(fvariance);
+						} else if(doQuantile || doConfidence) {
+							firstRow.add(val);
+						}
+						
 						
 					} else {
 						firstRow.add(str);
@@ -164,40 +174,52 @@ public class PageHelper {
 			}
 		}
 		
+		
+		/*
+		 * fill data into table
+		 */
+		
 		body.add(firstRow);
 		dists.add(new NormalDist(fmean,fvariance));
-		
 		boolean colTag = (headFlags.size() == columnCount);
-		System.out.println(headFlags.size() + " " + columnCount + " " + colTag);
-		
 		
 		for(int i = 1; i <= columnCount; i ++) {
+			
 			String colName = rs.getMetaData().getColumnName(i);
-			head.add(colName); 
+			if(colName.startsWith("_existence")) {
+				colName = "Existence_Probability";
+			}
+			head.add(colName);
+			
 			if(colTag) {
 				if(headFlags.get(i)) {
-					head.add(colName + "_5Pct");
-					head.add(colName + "_95Pct");
+					if(doVariance) {
+						head.add(colName + "_Variance");
+					} else if(doQuantile) {
+						head.add(colName + quan);
+					} else if(doConfidence) {
+						head.add(colName + conf);
+					}
 				}
 			}
+			
 		}
 		
+		// for debugging
 		for(Object headName:head) {
-			System.out.print(head + "\t");
-		}
-		System.out.println();
-		for(boolean headflag:headFlags) {
-			System.out.print(headflag + "\t");
+			System.out.print(headName + "\t");
 		}
 		System.out.println();
 
 		while (rs.next()) {
 			List<Object> row = new ArrayList<Object>();
-			//column count starts from 1
+
+			// TODO current, we still suppose only google chart per line
 			double mean = 0;
 			double variance = 1;
 			
-			for (int i=1; i<=columnCount; i++) {
+			for (int i=1; i <= columnCount; i++) {
+				
 				Object obj = rs.getObject(i);
 
 				if (obj != null) {
@@ -206,12 +228,27 @@ public class PageHelper {
 						
 						str = str.substring(1, str.length() - 1);
 						String[] tokens = str.split(",");
-						mean = Double.parseDouble(tokens[2]);
-						variance = Double.parseDouble(tokens[3]);
 						
-						row.add(tokens[2]);
-						row.add(tokens[0]);
-						row.add(tokens[1]);
+						String val = null;
+						if(tokens.length == 3) {
+							val = tokens[0];
+							mean = Double.parseDouble(tokens[1]);
+							variance = Double.parseDouble(tokens[2]);
+						} else if (tokens.length == 4){
+							val = "(" + tokens[0] + "," + tokens[1] + ")";
+							mean = Double.parseDouble(tokens[2]);
+							variance = Double.parseDouble(tokens[3]);
+						} else {
+							System.out.println("Unknown Results");
+						}
+						
+						
+						row.add(fmean);
+						if(doVariance) {
+							row.add(fvariance);
+						} else if(doQuantile || doConfidence) {
+							row.add(val);
+						}
 						
 					} else {
 						row.add(str);
@@ -221,18 +258,6 @@ public class PageHelper {
 					row.add("null");
 				}
 			}
-			//			if (doVariance) {
-			//				row.add("");
-			//			}
-			//			if (doExist) {
-			//				row.add("");
-			//			}
-			//			if (doQuantile) {
-			//				row.add("");
-			//			}
-			//			if (doConfidence) {
-			//				row.add("");
-			//			}
 
 			body.add(row);
 			dists.add(new NormalDist(mean,variance));
