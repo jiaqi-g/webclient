@@ -25,16 +25,38 @@ import edu.ucla.boost.web.VanillaBootstrapRunner;
 public class Server extends NanoHTTPD {
 
 	protected Thread t = null;
+	protected JdbcClient client = new JdbcClient();
+	protected double execTime = 0;
 
 	public Server() {
 		super(Conf.port);
+	}
+	
+	protected ResultSet execABM(List<String> sqls) {
+		ResultSet rs = null;
+		execTime = 0;
+		
+		try {
+			for(String sql:sqls) {
+				if(sql.startsWith("--")) {
+		        client.executeSQL(sql.replace("--", "").trim());
+				} else {
+					TimeUtil.start();
+					rs = client.executeSQL(sql);
+					execTime += TimeUtil.getPassedSeconds();
+				}
+			} 
+		 } catch (SQLException e) {
+       e.printStackTrace();
+     }
+		
+		return rs;
 	}
 
 	@Override
 	public Response serve(IHTTPSession session) {
 		String uri = session.getUri();
 		ParamUtil params = new ParamUtil(session.getParms());
-
 		InputStream mbuffer = null;
 		try {
 			if (uri != null) {
@@ -58,18 +80,8 @@ public class Server extends NanoHTTPD {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				} else if (uri.equals("/search")) {
-					
 					List<String> sqls = params.getQueryList();
-					
-					for(String sql:sqls) {
-						System.out.println("@@" + sql);
-					}
-					
-					JdbcClient client = new JdbcClient();
-					ResultSet rs = null;
-					for (String sql: sqls) {
-						rs = client.executeSQL(sql);
-					}
+					ResultSet rs = execABM(sqls);
 					return new Response(Status.OK, Type.MIME_HTML,
 							PageHelper.makeTable(rs, params));
 				} else if (uri.equals("/compare")) {
