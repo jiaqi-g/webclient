@@ -41,8 +41,10 @@ public class Server extends NanoHTTPD {
 
 				System.out.println(uri);
 
-				if (uri.contains("favicon")) return null;
-
+				if (uri.contains("favicon")) {
+					return null;
+				}
+				
 				if (uri.contains(".js")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_JS, mbuffer);
@@ -56,8 +58,13 @@ public class Server extends NanoHTTPD {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				} else if (uri.equals("/search")) {
-					//support batch execution
+					
 					List<String> sqls = params.getQueryList();
+					
+					for(String sql:sqls) {
+						System.out.println("@@" + sql);
+					}
+					
 					JdbcClient client = new JdbcClient();
 					ResultSet rs = null;
 					for (String sql: sqls) {
@@ -135,8 +142,6 @@ public class Server extends NanoHTTPD {
 									e.printStackTrace();
 								}
 							}
-							
-
 						}
 					}
 					
@@ -181,7 +186,6 @@ public class Server extends NanoHTTPD {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else {
-					//Log.log("Opening file "+ uri.substring(1));
 					Log.log("Can not find MIME type for " + uri + ", open default page.");
 
 					mbuffer = Asset.openDefault();
