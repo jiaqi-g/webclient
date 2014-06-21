@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.ConfUtil;
@@ -66,6 +67,10 @@ public class Server extends NanoHTTPD {
 			if (uri != null) {
 
 				System.out.println(uri);
+				Map<String,String> paras = session.getParms();
+				for(Map.Entry<String, String> entry:paras.entrySet()) {
+					System.out.println(entry.getKey() + "@@" + entry.getValue());
+				}
 
 				if (uri.contains("favicon") || uri.contains("http")) {
 					return null;
