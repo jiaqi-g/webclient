@@ -107,7 +107,7 @@ public class PageHelper {
 		}
 		if (doConfidence) {
 				Confidence confidence = params.getConfidence();
-				conf = "_(" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%)";
+				conf = "_[" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%]";
 		}
 		
 		System.out.println(doVariance + "\t" + doQuantile + "\t" + doConfidence);
@@ -147,7 +147,7 @@ public class PageHelper {
 							fmean = Double.parseDouble(tokens[1]);
 							fvariance = Double.parseDouble(tokens[2]);
 						} else if (tokens.length == 4){
-							val = "(" + tokens[0] + "," + tokens[1] + ")";
+							val = "[" + tokens[0] + "," + tokens[1] + "]";
 							fmean = Double.parseDouble(tokens[2]);
 							fvariance = Double.parseDouble(tokens[3]);
 						} else {

@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.ConfUtil;
@@ -33,27 +32,82 @@ public class Server extends NanoHTTPD {
 		super(Conf.port);
 	}
 	
+	protected String setTotalTupleNumber(String line) {
+		double sampleSize = 1;
+		String[] tokens = line.split("=");
+		String[] words = tokens[1].trim().split("_");
+		if(words.length != 3) {
+			Log.log(line);
+			Log.log("Error in Server.java: incorrect sample table name!");
+		} else {
+			String tbl = words[0].toLowerCase();
+			if(tbl.equals("lineitem")||tbl.equals("tmp17")||tbl.equals("tmp18")) {
+				sampleSize = 6000000;
+			} else if (tbl.equals("partsupp")) {
+				sampleSize = 800000;
+			} else if (tbl.equals("customer")) {
+				sampleSize = 150000;
+			} else {
+				Log.log("Error in Server.java: unknown sample table name!");
+			}
+			int pct = Integer.parseInt(words[1]);
+			sampleSize = sampleSize * pct;
+		}
+		
+		return "set hive.abm.sample.size = " + sampleSize + ";";
+	}
+	
 	protected ResultSet execABM(List<String> sqls) {
 		ResultSet rs = null;
 		execTime = 0;
 		
 		try {
-			
-			// TODO
-			// set select, set N
-			
 			for(String sql:sqls) {
-				if(sql.startsWith("--")) {
+				if(sqls.contains("hive.abm.sampled.table")) {
+					client.executeSQL(setTotalTupleNumber(sql));
+				}
+				
+				if(sql.startsWith("--")||sql.startsWith("set")) {
 		        client.executeSQL(sql.replace("--", "").trim());
-				} else {
+				} else if (!sql.toLowerCase().contains("drop")){
 					TimeUtil.start();
 					rs = client.executeSQL(sql);
 					execTime += TimeUtil.getPassedSeconds();
+				} else {
+					 client.executeSQL(sql);
 				}
 			} 
 		 } catch (SQLException e) {
        e.printStackTrace();
      }
+		System.out.println("ABM Execution time: " + execTime);
+		return rs;
+	}
+	
+	protected ResultSet execBootstrap(List<String> sqls) {
+		ResultSet rs = null;
+		execTime = 0;
+		
+		try {
+			client.executeSQL("set hive.abm = false");
+			client.executeSQL("set mapred.reduce.tasks= 112;");
+			
+			for(String sql:sqls) {
+				if(sql.contains("--") || sql.startsWith("set"))
+					continue;
+				else if(!sql.toLowerCase().contains("drop")) {
+					TimeUtil.start();
+					rs = client.executeSQL(sql);
+					execTime += TimeUtil.getPassedSeconds();
+				}
+				else {
+					client.equals(sql);
+				}
+			}
+		} catch (SQLException e) {
+      e.printStackTrace();
+    }
+		System.out.println("Bootstrap Execution time: " + execTime);
 		
 		return rs;
 	}
@@ -67,11 +121,10 @@ public class Server extends NanoHTTPD {
 			if (uri != null) {
 
 				System.out.println(uri);
-				Map<String,String> paras = session.getParms();
-				for(Map.Entry<String, String> entry:paras.entrySet()) {
-					System.out.println(entry.getKey() + "@@" + entry.getValue());
-				}
-
+//				Map<String,String> paras = session.getParms();
+//				for(Map.Entry<String, String> entry:paras.entrySet()) {
+//					System.out.println(entry.getKey() + "@@" + entry.getValue());
+//				}
 				if (uri.contains("favicon") || uri.contains("http")) {
 					return null;
 				}
@@ -90,61 +143,49 @@ public class Server extends NanoHTTPD {
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				} else if (uri.equals("/search")) {
 					List<String> sqls = params.getQueryList();
+					if(params.doQuantile() || params.doConfidence()) {
+						sqls.add(0, "set hive.abm.measure = 2;");
+					} else {
+						sqls.add(0, "set hive.abm.measure = 3;");
+						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile() + ";");
+					}
 					ResultSet rs = execABM(sqls);
 					return new Response(Status.OK, Type.MIME_HTML,
 							PageHelper.makeTable(rs, params));
 				} else if (uri.equals("/compare")) {
-					//support batch execution
 					List<String> sqls = params.getQueryList();
-					JdbcClient client = new JdbcClient();
-					ResultSet rs = null;
-
-					String selectSQL = null;
-					for (String sql: sqls) {
-						if (sql.startsWith("select")) {
-							selectSQL = sql;
-							continue;
-						}
-						rs = client.executeSQL(sql);
+					if(params.doVariance() || params.doConfidence()) {
+						sqls.add(0, "set hive.abm.measure = 2;");
+					} else {
+						sqls.add(0, "set hive.abm.measure = 3;");
+						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile() + ";");
 					}
-
+					ResultSet rs = null;
 					double abmTime = 0.0;
 					double closeFormTime = 0.0;
 					double vanillaTime = 0.0;
-					if (selectSQL != null) {
+					if (sqls.size() > 0) {
 						Log.log("run vanilla bootstrap ...");
-						client.closeABM();
-						TimeUtil.start();
-						client.executeSQL(selectSQL);
-						vanillaTime = TimeUtil.getPassedSeconds();
-
+						execBootstrap(sqls);
+						vanillaTime= execTime;
 						Log.log("run abm ...");
-						client.openABM();
-						TimeUtil.start();
-						client.executeSQL(selectSQL);
-						abmTime = TimeUtil.getPassedSeconds();
-
+						rs = execABM(sqls);
+						closeFormTime = execTime;
 						Log.log("run closed form ...");
-						client.openABM();
-						TimeUtil.start();
-						rs = client.executeSQL(selectSQL);
-						closeFormTime = TimeUtil.getPassedSeconds();
+						execABM(sqls);
+						abmTime = execTime;
 					} else {
 						return null;
 					}
-
 					return new Response(Status.OK, Type.MIME_HTML,
 							PageHelper.makeAll(rs, params, new Time(abmTime, closeFormTime, vanillaTime)));
 				} else if (uri.equals("/plan")) {
-					//Log.log("require query plan");
 					List<String> sqls = params.getQueryList();
-					JdbcClient client = new JdbcClient();
 					//only execute "select" here, potential bugs for not executing "set"
 					boolean isAbmEligible = true;
 					boolean isCloseEligible = true;
 					boolean isBootstrapEligible = true;
-					
-					//String exception = "";
+					String drop = null;
 					for (String sql: sqls) {
 						if (sql.toLowerCase().startsWith("select")) {
 							if (sql.toLowerCase().contains("min") || sql.toLowerCase().contains("max")) {
@@ -158,39 +199,36 @@ public class Server extends NanoHTTPD {
 								catch (SQLException e) {
 									isAbmEligible = false;
 									isCloseEligible = false;
-									//String[] arrs = e.getMessage().split(":");
-									//exception = arrs[arrs.length - 1].trim();
 									e.printStackTrace();
 								}
 							}
 						}
+						else if(sql.startsWith("--")) {
+			        client.executeSQL(sql.replace("--", "").trim());
+						} else if(!sql.contains("drop")) {
+							client.executeSQL(sql);
+						} else {
+							drop = sql;
+						}
 					}
-					
 					mbuffer = Asset.getPlan(isAbmEligible, isCloseEligible, isBootstrapEligible);
+					if(drop != null) {
+						client.executeSQL(drop);
+					}
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains("vanilla")) {
-					//support batch execution
-					List<String> sqls = params.getQueryList();
-					JdbcClient client = new JdbcClient();
-					
-					String selectSQL = null;
-					for (String sql: sqls) {
-						if (sql.startsWith("select")) {
-							selectSQL = sql;
-							break;
-						}
+					if(t != null) {
+						t.interrupt();
 					}
-					
-					client.openABM();
-					TimeUtil.start();
-					client.executeSQL(selectSQL);
-					double abmTime = TimeUtil.getPassedSeconds();
+					List<String> sqls = params.getQueryList();
+					execABM(sqls);
+					double abmTime = execTime;
 
-					if (selectSQL != null) {
-						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(100, selectSQL, Conf.websitePath + "/", abmTime);
+					if (sqls.size() > 0) {
+						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(51, sqls, Conf.websitePath + "/", abmTime);
 						t = new Thread(runner);
 						t.start();
 						mbuffer = Asset.open(uri);
@@ -208,7 +246,6 @@ public class Server extends NanoHTTPD {
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else {
 					Log.log("Can not find MIME type for " + uri + ", open default page.");
-
 					mbuffer = Asset.openDefault();
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				}
