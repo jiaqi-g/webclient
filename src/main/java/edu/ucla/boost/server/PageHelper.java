@@ -192,7 +192,7 @@ public class PageHelper {
 			head.add(colName);
 			
 			if(colTag) {
-				if(headFlags.get(i)) {
+				if(headFlags.get(i - 1)) {
 					if(doVariance) {
 						head.add(colName + "_Variance");
 					} else if(doQuantile) {
