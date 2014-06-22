@@ -32,7 +32,7 @@ public class VanillaBootstrapRunner implements Runnable {
 		
 		try {
 			client.executeSQL("set hive.abm = false");
-			client.executeSQL("set mapred.reduce.tasks= 112;");
+			client.executeSQL("set mapred.reduce.tasks= 112");
 			
 			for(String sql:sqls) {
 				if(sql.contains("--") || sql.startsWith("set"))

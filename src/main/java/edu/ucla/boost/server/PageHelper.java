@@ -128,7 +128,7 @@ public class PageHelper {
 		
 		
 		double fmean = 0;
-		double fvariance = 1;
+		double fvariance = 0;
 		if(rs.next()) {
 			for (int i=1; i <= columnCount; i++) {
 				Object obj = rs.getObject(i);
@@ -216,7 +216,7 @@ public class PageHelper {
 
 			// TODO current, we still suppose only google chart per line
 			double mean = 0;
-			double variance = 1;
+			double variance = 0;
 			
 			for (int i=1; i <= columnCount; i++) {
 				
@@ -235,7 +235,7 @@ public class PageHelper {
 							mean = Double.parseDouble(tokens[1]);
 							variance = Double.parseDouble(tokens[2]);
 						} else if (tokens.length == 4){
-							val = "(" + tokens[0] + "," + tokens[1] + ")";
+							val = "[" + tokens[0] + "," + tokens[1] + "]";
 							mean = Double.parseDouble(tokens[2]);
 							variance = Double.parseDouble(tokens[3]);
 						} else {

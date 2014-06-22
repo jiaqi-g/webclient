@@ -13,13 +13,20 @@ public class NormalDist {
 		this.variance = variance;
 		
 		double std = Math.sqrt(variance);
-		NormalDistribution dis = new NormalDistribution(mean, variance);
-		int idx = 0;
+		if(std > 0) {
+			NormalDistribution dis = new NormalDistribution(mean, variance);
+			int idx = 0;
 		
-		for(int i = -3; i < 4; i ++) {
-			 x[idx] = mean + i * std;
-			 y[idx] = dis.density(x[idx]);
-			 idx ++;
+			for(int i = -3; i < 4; i ++) {
+				 x[idx] = mean + i * std;
+			 	 y[idx] = dis.density(x[idx]);
+			 	 idx ++;
+			}
+		} else {
+			for(int i = 0; i < 7; i ++) {
+				x[i] = 0;
+				y[i] = 0;
+			}
 		}
 	}
 	

@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.ConfUtil;
@@ -33,7 +34,7 @@ public class Server extends NanoHTTPD {
 	}
 	
 	protected String setTotalTupleNumber(String line) {
-		double sampleSize = 1;
+		int sampleSize = 1;
 		String[] tokens = line.split("=");
 		String[] words = tokens[1].trim().split("_");
 		if(words.length != 3) {
@@ -54,7 +55,7 @@ public class Server extends NanoHTTPD {
 			sampleSize = sampleSize * pct;
 		}
 		
-		return "set hive.abm.sample.size = " + sampleSize + ";";
+		return "set hive.abm.sample.size = " + sampleSize + "";
 	}
 	
 	protected ResultSet execABM(List<String> sqls) {
@@ -63,7 +64,7 @@ public class Server extends NanoHTTPD {
 		
 		try {
 			for(String sql:sqls) {
-				if(sqls.contains("hive.abm.sampled.table")) {
+				if(sql.contains("hive.abm.sampled.table")) {
 					client.executeSQL(setTotalTupleNumber(sql));
 				}
 				
@@ -90,7 +91,7 @@ public class Server extends NanoHTTPD {
 		
 		try {
 			client.executeSQL("set hive.abm = false");
-			client.executeSQL("set mapred.reduce.tasks= 112;");
+			client.executeSQL("set mapred.reduce.tasks= 112");
 			
 			for(String sql:sqls) {
 				if(sql.contains("--") || sql.startsWith("set"))
@@ -121,10 +122,11 @@ public class Server extends NanoHTTPD {
 			if (uri != null) {
 
 				System.out.println(uri);
-//				Map<String,String> paras = session.getParms();
-//				for(Map.Entry<String, String> entry:paras.entrySet()) {
-//					System.out.println(entry.getKey() + "@@" + entry.getValue());
-//				}
+				
+				Map<String,String> paras = session.getParms();
+				for(Map.Entry<String, String> entry:paras.entrySet()) {
+					System.out.println(entry.getKey() + "@@" + entry.getValue());
+				}
 				if (uri.contains("favicon") || uri.contains("http")) {
 					return null;
 				}
@@ -143,11 +145,11 @@ public class Server extends NanoHTTPD {
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 				} else if (uri.equals("/search")) {
 					List<String> sqls = params.getQueryList();
-					if(params.doQuantile() || params.doConfidence()) {
-						sqls.add(0, "set hive.abm.measure = 2;");
+					if(params.doVariance() || params.doConfidence()) {
+						sqls.add(0, "set hive.abm.measure = 2");
 					} else {
-						sqls.add(0, "set hive.abm.measure = 3;");
-						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile() + ";");
+						sqls.add(0, "set hive.abm.measure = 3");
+						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
 					}
 					ResultSet rs = execABM(sqls);
 					return new Response(Status.OK, Type.MIME_HTML,
@@ -155,10 +157,10 @@ public class Server extends NanoHTTPD {
 				} else if (uri.equals("/compare")) {
 					List<String> sqls = params.getQueryList();
 					if(params.doVariance() || params.doConfidence()) {
-						sqls.add(0, "set hive.abm.measure = 2;");
+						sqls.add(0, "set hive.abm.measure = 2");
 					} else {
-						sqls.add(0, "set hive.abm.measure = 3;");
-						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile() + ";");
+						sqls.add(0, "set hive.abm.measure = 3");
+						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
 					}
 					ResultSet rs = null;
 					double abmTime = 0.0;
