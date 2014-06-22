@@ -18,7 +18,7 @@ public class NormalDist {
 			int idx = 0;
 		
 			for(int i = -10; i <= 10; i ++) {
-				 x[idx] = mean + i * std;
+				 x[idx] = mean +  0.25 * i * std;
 			 	 y[idx] = dis.density(x[idx]);
 			 	 idx ++;
 			}
