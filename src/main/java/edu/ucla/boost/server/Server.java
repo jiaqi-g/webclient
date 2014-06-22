@@ -63,23 +63,26 @@ public class Server extends NanoHTTPD {
 		
 		try {
 			for(String sql:sqls) {
+
 				if(sql.contains("hive.abm.sampled.table")) {
 					client.executeSQL(setTotalTupleNumber(sql));
 				}
 				
 				if(sql.startsWith("--")||sql.startsWith("set")) {
-		        client.executeSQL(sql.replace("--", "").trim());
-				} else if (!sql.toLowerCase().contains("drop")){
+		        		client.executeSQL(sql.replace("--", "").trim());
+				} else if (!(sql.toLowerCase().contains("drop")||sql.toLowerCase().contains("create"))){
 					TimeUtil.start();
 					rs = client.executeSQL(sql);
 					execTime += TimeUtil.getPassedSeconds();
 				} else {
-					 client.executeSQL(sql);
+					TimeUtil.start();
+					client.executeSQL(sql);
+					execTime += TimeUtil.getPassedSeconds();
 				}
 			} 
 		 } catch (SQLException e) {
-       e.printStackTrace();
-     }
+       			e.printStackTrace();
+     		}
 		System.out.println("ABM Execution time: " + execTime);
 		return rs;
 	}
