@@ -38,18 +38,17 @@ public class Server extends NanoHTTPD {
 		String[] tokens = line.split("=");
 		String[] words = tokens[1].trim().split("_");
 		if(words.length != 3) {
-			Log.log(line);
-			Log.log("Error in Server.java: incorrect sample table name!");
+			Log.log("Error in Server.java: incorrect sample table command!" + line);
 		} else {
-			String tbl = words[0].toLowerCase();
+			String tbl = words[0].toLowerCase().trim();
 			if(tbl.equals("lineitem")||tbl.equals("tmp17")||tbl.equals("tmp18")) {
 				sampleSize = 6000000;
-			} else if (tbl.equals("partsupp")) {
+			} else if (tbl.equals("partsupp")||tbl.equals("tmp11")) {
 				sampleSize = 800000;
 			} else if (tbl.equals("customer")) {
 				sampleSize = 150000;
 			} else {
-				Log.log("Error in Server.java: unknown sample table name!");
+				Log.log("Error in Server.java: unknown sample table name!" + tbl);
 			}
 			int pct = Integer.parseInt(words[1]);
 			sampleSize = sampleSize * pct;
