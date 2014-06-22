@@ -14,11 +14,11 @@ public class NormalDist {
 		
 		double std = Math.sqrt(variance);
 		if(std > 0) {
-			NormalDistribution dis = new NormalDistribution(mean, variance);
+			NormalDistribution dis = new NormalDistribution(mean, std);
 			int idx = 0;
-		
+	
 			for(int i = -10; i <= 10; i ++) {
-				 x[idx] = mean + i * std;
+				 x[idx] = mean +  0.3 * i * std;
 			 	 y[idx] = dis.density(x[idx]);
 			 	 idx ++;
 			}

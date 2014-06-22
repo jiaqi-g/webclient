@@ -243,9 +243,9 @@ public class PageHelper {
 						}
 						
 						
-						row.add(fmean);
+						row.add(mean);
 						if(doVariance) {
-							row.add(fvariance);
+							row.add(variance);
 						} else if(doQuantile || doConfidence) {
 							row.add(val);
 						}

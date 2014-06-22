@@ -16,6 +16,8 @@ public class EvaluationResultHelper {
 	boolean makeTable = false;
 	boolean makeTime = false;
 	
+	public static final String dataColumnName = "id";
+
 	public EvaluationResultHelper() {
 	}
 	
@@ -52,7 +54,7 @@ public class EvaluationResultHelper {
 			}
 			sb.append("</tr>\n");
 		} else {
-			sb.append("<tr class=\"tpchrow\" href=\"#\" title=\"" + dist.toString() + "\">\n");
+			sb.append("<tr class=\"tpchrow\" href=\"#\" " + dataColumnName + "=\"" + dist.toString() + "\">\n");
 			makeTd(index);
 			for (Object obj: row) {
 				makeTd(obj);
