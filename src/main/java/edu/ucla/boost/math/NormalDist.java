@@ -5,8 +5,8 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 public class NormalDist {
 	double mean;
 	double variance;
-	double[] x = new double[7];
-	double[] y = new double[7];
+	double[] x = new double[21];
+	double[] y = new double[21];
 	
 	public NormalDist(double mean, double variance) {
 		this.mean = mean;
@@ -17,13 +17,13 @@ public class NormalDist {
 			NormalDistribution dis = new NormalDistribution(mean, variance);
 			int idx = 0;
 		
-			for(int i = -3; i < 4; i ++) {
+			for(int i = -10; i <= 10; i ++) {
 				 x[idx] = mean + i * std;
 			 	 y[idx] = dis.density(x[idx]);
 			 	 idx ++;
 			}
 		} else {
-			for(int i = 0; i < 7; i ++) {
+			for(int i = 0; i < x.length; i ++) {
 				x[i] = 0;
 				y[i] = 0;
 			}
@@ -33,7 +33,7 @@ public class NormalDist {
 	@Override
 	public String toString() {
 		String s = "";
-		for (int i=0; i<7; i++) {
+		for (int i=0; i< x.length; i++) {
 			s += x[i] + "," + y[i] + ",";
 		}
 		s = s.substring(0, s.length()-1);

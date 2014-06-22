@@ -118,6 +118,11 @@ public class Server extends NanoHTTPD {
 		String uri = session.getUri();
 		ParamUtil params = new ParamUtil(session.getParms());
 		InputStream mbuffer = null;
+		
+		if(client == null) {
+			client = new JdbcClient();
+		}
+		
 		try {
 			if (uri != null) {
 
@@ -146,9 +151,11 @@ public class Server extends NanoHTTPD {
 				} else if (uri.equals("/search")) {
 					List<String> sqls = params.getQueryList();
 					if(params.doVariance() || params.doConfidence()) {
-						sqls.add(0, "set hive.abm.measure = 2");
-					} else {
 						sqls.add(0, "set hive.abm.measure = 3");
+						sqls.add(1, "set hive.abm.quantilePct = " + params.getConfidence().getConfidenceFrom());
+						sqls.add(2, "set hive.abm.quantilePct = " + params.getConfidence().getConfidenceTo());
+					} else {
+						sqls.add(0, "set hive.abm.measure = 2");
 						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
 					}
 					ResultSet rs = execABM(sqls);
@@ -157,9 +164,11 @@ public class Server extends NanoHTTPD {
 				} else if (uri.equals("/compare")) {
 					List<String> sqls = params.getQueryList();
 					if(params.doVariance() || params.doConfidence()) {
-						sqls.add(0, "set hive.abm.measure = 2");
-					} else {
 						sqls.add(0, "set hive.abm.measure = 3");
+						sqls.add(1, "set hive.abm.quantilePct = " + params.getConfidence().getConfidenceFrom());
+						sqls.add(2, "set hive.abm.quantilePct = " + params.getConfidence().getConfidenceTo());
+					} else {
+						sqls.add(0, "set hive.abm.measure = 2");
 						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
 					}
 					ResultSet rs = null;
