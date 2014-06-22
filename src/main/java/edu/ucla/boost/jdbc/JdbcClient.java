@@ -33,13 +33,13 @@ public class JdbcClient {
 	public JdbcClient() {
 		try {
 			con = DriverManager.getConnection(Conf.getConnectionAddress(), "" , "");
-			stmt = con.createStatement();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public ResultSet executeSQL(String sql) throws SQLException {
+		stmt = con.createStatement();
 		return stmt.executeQuery(prepareSQL(sql));
 	}
 
