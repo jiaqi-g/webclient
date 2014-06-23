@@ -186,10 +186,22 @@ public class Server extends NanoHTTPD {
 							PageHelper.makeAll(rs, params, new Time(abmTime, closeFormTime, vanillaTime)));
 				} else if (uri.equals("/plan")) {
 					List<String> sqls = params.getQueryList();
-					boolean isAbmEligible = true;
 					
+					boolean isAbmEligible = true;					
 					String exceptionInfo = "none";
-					String drop = null;
+					
+					for (String sql: sqls) {
+						if (sql.toLowerCase().startsWith("select")) {
+							//do nothing
+						} else if (sql.startsWith("--")) {
+							//set
+							client.executeSQL(sql.replace("--", "").trim());
+						} else {
+							//create & drop
+							client.executeSQL(sql);
+						}
+					}
+					
 					for (String sql: sqls) {
 						if (sql.toLowerCase().startsWith("select")) {
 								try {
@@ -201,19 +213,10 @@ public class Server extends NanoHTTPD {
 									exceptionInfo = arr[arr.length-1];
 									e.printStackTrace();
 								}
-							
-						} else if (sql.startsWith("--")) {
-							client.executeSQL(sql.replace("--", "").trim());
-						} else if(!sql.contains("drop")) {
-							client.executeSQL(sql);
-						} else {
-							drop = sql;
 						}
 					}
+					
 					mbuffer = Asset.getPlan(isAbmEligible, exceptionInfo);
-					if(drop != null) {
-						client.executeSQL(drop);
-					}
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);

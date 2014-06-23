@@ -113,7 +113,6 @@ public class PageHelper {
 		 */
 		while (rs.next()) {
 			List<Object> row = new ArrayList<Object>();
-			Log.log(row.toString());
 			
 			List<NormalDist> distLst = new ArrayList<NormalDist>();
 			for (int i=1; i <= columnCount; i++) {
