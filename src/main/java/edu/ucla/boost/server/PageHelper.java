@@ -90,147 +90,45 @@ public class PageHelper {
 		eval.setTime(time);
 	}
 
-		
 	private static void setTable(ResultSet rs, ParamUtil params, EvaluationResultHelper eval) throws SQLException {
 		if (rs == null) {
 			return;
 		}
-		
+
 		boolean doVariance = params.doVariance();
 		boolean doQuantile = params.doQuantile();
 		boolean doConfidence = params.doConfidence();
-		String quan = null, conf = null;
 		
-		if (doQuantile) {
-				Quantile quantile = params.getQuantile();
-				quan = "_" + quantile.getQuantile() + "%";
-		}
-		if (doConfidence) {
-				Confidence confidence = params.getConfidence();
-				conf = "_[" + confidence.getConfidenceFrom() + "%, " +  confidence.getConfidenceTo() + "%]";
-		}
+		Log.log(doVariance + "\t" + doQuantile + "\t" + doConfidence);
 		
-		System.out.println(doVariance + "\t" + doQuantile + "\t" + doConfidence);
-
-		//construct head
 		int columnCount = rs.getMetaData().getColumnCount();
 		Log.log("column count: " + columnCount);
-		
-		/*
-		 * read first row to construct head
-		 */
-		List<Boolean> headFlags = new ArrayList<Boolean>();
-		List<Object> firstRow = new ArrayList<Object>();
-		
+
 		List<Object> head = new ArrayList<Object>();
-		List<NormalDist> dists = new ArrayList<NormalDist>();
 		List<List<Object>> body = new ArrayList<List<Object>>();
-		
-		
-		double fmean = 0;
-		double fvariance = 0;
-		if(rs.next()) {
-			for (int i=1; i <= columnCount; i++) {
-				Object obj = rs.getObject(i);
-				boolean flag = false;
-				
-				if (obj != null) {
-					String str = obj.toString().trim();
-					if(str.startsWith("[") && str.endsWith("]")) {
-						flag = true;						
-						str = str.substring(1, str.length() - 1);
-						String[] tokens = str.split(",");
-
-						String val = null;
-						if(tokens.length == 3) {
-							val = tokens[0];
-							fmean = Double.parseDouble(tokens[1]);
-							fvariance = Double.parseDouble(tokens[2]);
-						} else if (tokens.length == 4){
-							val = "[" + tokens[0] + "," + tokens[1] + "]";
-							fmean = Double.parseDouble(tokens[2]);
-							fvariance = Double.parseDouble(tokens[3]);
-						} else {
-							System.out.println("Unknown Results");
-						}
-						
-						
-						firstRow.add(fmean);
-						if(doVariance) {
-							firstRow.add(fvariance);
-						} else if(doQuantile || doConfidence) {
-							firstRow.add(val);
-						}
-						
-						
-					} else {
-						firstRow.add(str);
-					}
-			} else {
-				firstRow.add("null");
-			} 
-				
-			headFlags.add(flag);
-			}
-		}
-		
+		List<List<NormalDist>> dists = new ArrayList<List<NormalDist>>();
 		
 		/*
-		 * fill data into table
+		 * construct body
 		 */
-		
-		body.add(firstRow);
-		dists.add(new NormalDist(fmean,fvariance));
-		boolean colTag = (headFlags.size() == columnCount);
-		
-		for(int i = 1; i <= columnCount; i ++) {
-			
-			String colName = rs.getMetaData().getColumnName(i);
-			if(colName.startsWith("_existence")) {
-				colName = "Existence_Probability";
-			}
-			head.add(colName);
-			
-			if(colTag) {
-				if(headFlags.get(i - 1)) {
-					if(doVariance) {
-						head.add(colName + "_Variance");
-					} else if(doQuantile) {
-						head.add(colName + quan);
-					} else if(doConfidence) {
-						head.add(colName + conf);
-					}
-				}
-			}
-			
-		}
-		
-		// for debugging
-		for(Object headName:head) {
-			System.out.print(headName + "\t");
-		}
-		System.out.println();
-
 		while (rs.next()) {
 			List<Object> row = new ArrayList<Object>();
-
-			// TODO current, we still suppose only google chart per line
-			double mean = 0;
-			double variance = 0;
+			Log.log(row.toString());
 			
+			List<NormalDist> distLst = new ArrayList<NormalDist>();
 			for (int i=1; i <= columnCount; i++) {
-				
-				Object obj = rs.getObject(i);
+				double mean = 0;
+				double variance = 0;
 
+				Object obj = rs.getObject(i);
 				if (obj != null) {
 					String str = obj.toString().trim();
-					if(str.startsWith("[") && str.endsWith("]")) {
-						
+					if (str.startsWith("[") && str.endsWith("]")) {
 						str = str.substring(1, str.length() - 1);
 						String[] tokens = str.split(",");
-						
+
 						String val = null;
-						if(tokens.length == 3) {
+						if (tokens.length == 3) {
 							val = tokens[0];
 							mean = Double.parseDouble(tokens[1]);
 							variance = Double.parseDouble(tokens[2]);
@@ -242,25 +140,52 @@ public class PageHelper {
 							System.out.println("Unknown Results");
 						}
 						
-						
-						row.add(mean);
+						String s = "" + mean + " ";
 						if(doVariance) {
-							row.add(variance);
+							s += "(" + variance + ")";
 						} else if(doQuantile || doConfidence) {
-							row.add(val);
+							s += "(" + val + ")";
 						}
 						
+						row.add(s);
+						distLst.add(new NormalDist(mean,variance));
 					} else {
 						row.add(str);
+						distLst.add(null);
 					}
 				}
 				else {
 					row.add("null");
+					distLst.add(null);
 				}
 			}
-
 			body.add(row);
-			dists.add(new NormalDist(mean,variance));
+			dists.add(distLst);
+		}
+		
+		/*
+		 * construct head
+		 */
+		for(int i = 1; i <= columnCount; i ++) {
+			String colName = rs.getMetaData().getColumnName(i);
+			
+			if (colName.startsWith("_existence")) {
+				colName = "Existence_Probability";
+			}
+			
+			if (dists.get(0).get(i-1) != null) {
+				if (doVariance) {
+					colName += "_Variance";
+				}
+				if (doQuantile) {
+					colName += "_" + params.getQuantile().getQuantile() + "%";
+				}
+				if (doConfidence) {
+					colName += "_[" + params.getConfidence().getConfidenceFrom() + "%, " +  params.getConfidence().getConfidenceTo() + "%]";
+				}
+			}
+			
+			head.add(colName);
 		}
 
 		eval.setTable(head, body, dists);

@@ -9,43 +9,52 @@ import edu.ucla.boost.math.NormalDist;
 public class EvaluationResultHelper {
 	List<Object> thead;
 	List<List<Object>> tbody;
-	List<NormalDist> dists;
-	
+	List<List<NormalDist>> dists;
+
 	StringBuilder sb;
 	Time time;
 	boolean makeTable = false;
 	boolean makeTime = false;
-	
+
 	public static final String dataColumnName = "id";
 
 	public EvaluationResultHelper() {
 	}
-	
-	public void setTable(List<Object> head, List<List<Object>> body, List<NormalDist> dists) {
+
+	public void setTable(List<Object> head, List<List<Object>> body, List<List<NormalDist>> dists) {
 		this.thead = head;
 		this.tbody = body;
 		this.dists = dists;
 		makeTable = true;
 	}
-	
+
 	public void setTime(Time time) {
 		this.time = time;
 		makeTime = true;
 	}
-	
-	private void makeTd(Object obj) {
-		sb.append("<td>");
-		sb.append(obj);
-		sb.append("</td>\n");
+
+	private void makeTd(Object obj, NormalDist dist) {
+		if (dist == null) {
+			sb.append("<td>\n");
+			sb.append(obj);
+			sb.append("\n");
+			sb.append("</td>\n");
+		}
+		else {
+			sb.append("<td class=\"draw\" id=\"" + dist.toString() + "\">\n");
+			sb.append(obj);
+			sb.append("\n");
+			sb.append("</td>\n");
+		}
 	}
-	
+
 	private void makeTh(Object obj) {
 		sb.append("<th>");
 		sb.append(obj);
 		sb.append("</th>\n");
 	}
-	
-	private void makeTr(int index, List<Object> row, boolean isHead, NormalDist dist) {
+
+	private void makeTr(int index, List<Object> row, boolean isHead) {
 		if (isHead) {
 			sb.append("<tr>\n");
 			makeTh("#");
@@ -54,41 +63,42 @@ public class EvaluationResultHelper {
 			}
 			sb.append("</tr>\n");
 		} else {
-			sb.append("<tr class=\"tpchrow\" href=\"#\" " + dataColumnName + "=\"" + dist.toString() + "\">\n");
-			makeTd(index);
-			for (Object obj: row) {
-				makeTd(obj);
+			sb.append("<tr class=\"tpchrow\" href=\"#\"" + ">\n");
+			makeTd(index, null);
+			for (int i=0; i<dists.get(index).size(); i++) {
+				Object obj = row.get(i);
+				makeTd(obj, dists.get(index).get(i));
 			}
 			sb.append("</tr>\n");
 		}
 	}
-	
+
 	private void makeHead() {
 		sb.append("<thead>\n");
-		makeTr(0, thead, true, null);
+		makeTr(0, thead, true);
 		sb.append("</thead>\n");
 	}
-	
+
 	private void makeBody() {
 		sb.append("<tbody>\n");
 		for (int i=0; i<tbody.size(); i++) {
-			makeTr(i+1, tbody.get(i), false, dists.get(i));
+			makeTr(i, tbody.get(i), false);
 		}
 		sb.append("</tbody>\n");
 	}
-	
+
 	private void openDiv(String divClass) {
 		sb.append("<div class=\""+ divClass + "\">\n");
 	}
-	
+
 	private void closeDiv() {
 		sb.append("</div>\n");		
 	}
-	
+
 	public String make() {
 		sb = new StringBuilder();
 		sb.append("<div>\n");
-		
+
 		if (makeTime) {
 			openDiv("timeSecDiv");
 			openDiv("abmRes");
@@ -102,7 +112,7 @@ public class EvaluationResultHelper {
 			closeDiv();
 			closeDiv();
 		}
-		
+
 		if (makeTable) {
 			openDiv("tableSecDiv");
 			sb.append("<table class=\"table table-hover\">\n");
@@ -111,40 +121,46 @@ public class EvaluationResultHelper {
 			sb.append("</table>\n");
 			closeDiv();
 		}
-		
+
 		sb.append("</div>");
-		
+
 		return sb.toString();
 	}
-	
+
 	public static void main(String[] args) {
 		List<Object> thead = new ArrayList<Object>();
 		thead.add("l_partkey");
 		thead.add("revenue");
 		thead.add("Quantile");
-		
+
 		List<List<Object>> tbody = new ArrayList<List<Object>>();
 		List<Object> line1 = new ArrayList<Object>();
 		line1.add(63759);
 		line1.add(1192143.00);
 		line1.add(1168541.03);
-		
+
 		List<Object> line2 = new ArrayList<Object>();
 		line2.add(63832);
 		line2.add(1522863.89);
 		line2.add(1459116.42);
-		
+
 		tbody.add(line1);
 		tbody.add(line2);
-		
+
 		EvaluationResultHelper eval = new EvaluationResultHelper();
-		
-		List<NormalDist> dists = new ArrayList<NormalDist>();
+
+		//support multiple dists in one line
+		List<List<NormalDist>> dists = new ArrayList<List<NormalDist>>();
 		for (int i=0; i<tbody.size(); i++) {
-			dists.add(new NormalDist(0,1));
+			List<NormalDist> distLst = new ArrayList<NormalDist>();
+			for (int j=0; j<2; j++) {
+				distLst.add(new NormalDist(37,2));
+			}
+			dists.add(distLst);
 		}
+
 		eval.setTable(thead, tbody, dists);
-		
+
 		System.out.println(eval.make() + "\n");
 		//System.out.println(new EvaluationResultHelper(thead, tbody).make() + "\n");
 		//System.out.println(new EvaluationResultHelper(new Time(10.23, 8.42, 20.10)).make() + "\n");

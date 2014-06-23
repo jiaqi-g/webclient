@@ -57,10 +57,15 @@ public class Asset {
 		if (isAbmEligible) {
 			//copy plan file from remote machine
 			Scp.execute(Conf.remotePlanFile, Conf.planFile);
-			String[] arrs = FileSystem.readFileAsString(Conf.planFile).split("|");
+			String raw = FileSystem.readFileAsString(Conf.planFile);
+			Log.log(raw);
+			
+			String[] arrs = raw.split("\\|");
 			plan = arrs[0];
 			isCloseEligible = Boolean.parseBoolean(arrs[1]);
+			//plan = FileSystem.readFileAsString(Conf.planFile);
 			Log.log("JsonPlan From Remote: " + plan);
+			Log.log("isCloseEligible: " + isCloseEligible);
 		}
 		else {
 			isCloseEligible = false;

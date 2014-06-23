@@ -1,5 +1,7 @@
 package edu.ucla.boost.math;
 
+import java.text.DecimalFormat;
+
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class NormalDist {
@@ -7,6 +9,7 @@ public class NormalDist {
 	double variance;
 	double[] x = new double[21];
 	double[] y = new double[21];
+	static final DecimalFormat df = new DecimalFormat("#.###");
 	
 	public NormalDist(double mean, double variance) {
 		this.mean = mean;
@@ -34,7 +37,7 @@ public class NormalDist {
 	public String toString() {
 		String s = "";
 		for (int i=0; i< x.length; i++) {
-			s += x[i] + "," + y[i] + ",";
+			s += df.format(x[i]) + "," + df.format(y[i]) + ",";
 		}
 		s = s.substring(0, s.length()-1);
 		return s;
