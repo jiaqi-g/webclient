@@ -42,7 +42,7 @@ public class Asset {
 		return open(defaultPage);
 	}
 	
-	public static InputStream getPlan(boolean isAbmEligible, boolean isCloseEligible, boolean isBootstrapEligible) throws IOException {
+	public static InputStream getPlan(boolean isAbmEligible, boolean isCloseEligible, boolean isBootstrapEligible, String exceptionInfo) throws IOException {
 		String plan = "none";
 		if (isAbmEligible) {
 			//copy plan file from remote machine
@@ -53,22 +53,24 @@ public class Asset {
 		
 		String notice = "";
 		if (isAbmEligible) {
-			notice += "Safe for abm;\n";
+			notice += "1|\n";
 		} else {
-			notice += "Unsafe for abm;\n";
+			notice += "0|\n";
 		}
 		
 		if (isCloseEligible) {
-			notice += "Safe for closed form;\n";
+			notice += "1|\n";
 		} else {
-			notice += "Unsafe for closed form;\n";
+			notice += "0|\n";
 		}
 		
 		if (isBootstrapEligible) {
-			notice += "Safe for vanilla bootstrap;\n";
+			notice += "1|\n";
 		} else {
-			notice += "Unsafe for vanilla bootstrap;\n";
+			notice += "0|\n";
 		}
+		
+		notice += exceptionInfo + "|\n";
 		
 		String rs = notice + plan;
 		return new ByteArrayInputStream(rs.getBytes());

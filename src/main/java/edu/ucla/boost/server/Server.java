@@ -32,7 +32,7 @@ public class Server extends NanoHTTPD {
 	public Server() {
 		super(Conf.port);
 	}
-	
+
 	protected String setTotalTupleNumber(String line) {
 		int sampleSize = 1;
 		String[] tokens = line.split("=");
@@ -54,45 +54,45 @@ public class Server extends NanoHTTPD {
 			int pct = Integer.parseInt(words[1]);
 			sampleSize = sampleSize * pct;
 		}
-		
+
 		return "set hive.abm.sample.size = " + sampleSize + "";
 	}
-	
+
 	protected ResultSet execABM(List<String> sqls) {
 		ResultSet rs = null;
 		execTime = 0;
-		
+
 		try {
 			for(String sql:sqls) {
 				if(sql.contains("hive.abm.sampled.table")) {
 					client.executeSQL(setTotalTupleNumber(sql));
 				}
-				
+
 				if(sql.startsWith("--")||sql.startsWith("set")) {
-		        client.executeSQL(sql.replace("--", "").trim());
+					client.executeSQL(sql.replace("--", "").trim());
 				} else if (!sql.toLowerCase().contains("drop")){
 					TimeUtil.start();
 					rs = client.executeSQL(sql);
 					execTime += TimeUtil.getPassedSeconds();
 				} else {
-					 client.executeSQL(sql);
+					client.executeSQL(sql);
 				}
 			} 
-		 } catch (SQLException e) {
-       e.printStackTrace();
-     }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		System.out.println("ABM Execution time: " + execTime);
 		return rs;
 	}
-	
+
 	protected ResultSet execBootstrap(List<String> sqls) {
 		ResultSet rs = null;
 		execTime = 0;
-		
+
 		try {
 			client.executeSQL("set hive.abm = false");
 			client.executeSQL("set mapred.reduce.tasks= 112");
-			
+
 			for(String sql:sqls) {
 				if(sql.contains("--") || sql.startsWith("set"))
 					continue;
@@ -106,10 +106,10 @@ public class Server extends NanoHTTPD {
 				}
 			}
 		} catch (SQLException e) {
-      e.printStackTrace();
-    }
+			e.printStackTrace();
+		}
 		System.out.println("Bootstrap Execution time: " + execTime);
-		
+
 		return rs;
 	}
 
@@ -118,16 +118,16 @@ public class Server extends NanoHTTPD {
 		String uri = session.getUri();
 		ParamUtil params = new ParamUtil(session.getParms());
 		InputStream mbuffer = null;
-		
+
 		if(client == null) {
 			client = new JdbcClient();
 		}
-		
+
 		try {
 			if (uri != null) {
+				//record uri request
+				Log.log(uri);
 
-				System.out.println(uri);
-				
 				Map<String,String> paras = session.getParms();
 				for(Map.Entry<String, String> entry:paras.entrySet()) {
 					System.out.println(entry.getKey() + "@@" + entry.getValue());
@@ -135,7 +135,7 @@ public class Server extends NanoHTTPD {
 				if (uri.contains("favicon") || uri.contains("http")) {
 					return null;
 				}
-				
+
 				if (uri.contains(".js")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_JS, mbuffer);
@@ -196,6 +196,7 @@ public class Server extends NanoHTTPD {
 					boolean isAbmEligible = true;
 					boolean isCloseEligible = true;
 					boolean isBootstrapEligible = true;
+					String exceptionInfo = "none";
 					String drop = null;
 					for (String sql: sqls) {
 						if (sql.toLowerCase().startsWith("select")) {
@@ -210,19 +211,20 @@ public class Server extends NanoHTTPD {
 								catch (SQLException e) {
 									isAbmEligible = false;
 									isCloseEligible = false;
+									String[] arr = e.getMessage().split(":");
+									exceptionInfo = arr[arr.length-1];
 									e.printStackTrace();
 								}
 							}
-						}
-						else if(sql.startsWith("--")) {
-			        client.executeSQL(sql.replace("--", "").trim());
+						} else if (sql.startsWith("--")) {
+							client.executeSQL(sql.replace("--", "").trim());
 						} else if(!sql.contains("drop")) {
 							client.executeSQL(sql);
 						} else {
 							drop = sql;
 						}
 					}
-					mbuffer = Asset.getPlan(isAbmEligible, isCloseEligible, isBootstrapEligible);
+					mbuffer = Asset.getPlan(isAbmEligible, isCloseEligible, isBootstrapEligible, exceptionInfo);
 					if(drop != null) {
 						client.executeSQL(drop);
 					}
