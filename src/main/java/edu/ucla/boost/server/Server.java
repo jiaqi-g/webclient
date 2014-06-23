@@ -58,58 +58,51 @@ public class Server extends NanoHTTPD {
 		return "set hive.abm.sample.size = " + sampleSize + "";
 	}
 
-	protected ResultSet execABM(List<String> sqls) {
+	protected ResultSet execABM(List<String> sqls) throws SQLException {
 		ResultSet rs = null;
 		execTime = 0;
 
-		try {
-			for(String sql:sqls) {
-				if(sql.contains("hive.abm.sampled.table")) {
-					client.executeSQL(setTotalTupleNumber(sql));
-				}
+		for(String sql:sqls) {
+			if(sql.contains("hive.abm.sampled.table")) {
+				client.executeSQL(setTotalTupleNumber(sql));
+			}
 
-				if(sql.startsWith("--")||sql.startsWith("set")) {
-					client.executeSQL(sql.replace("--", "").trim());
-				} else if (!sql.toLowerCase().contains("drop")){
-					TimeUtil.start();
-					rs = client.executeSQL(sql);
-					execTime += TimeUtil.getPassedSeconds();
-				} else {
-					client.executeSQL(sql);
-				}
-			} 
-		} catch (SQLException e) {
-			e.printStackTrace();
+			if(sql.startsWith("--")||sql.startsWith("set")) {
+				client.executeSQL(sql.replace("--", "").trim());
+			} else if (!sql.toLowerCase().contains("drop")){
+				TimeUtil.start();
+				rs = client.executeSQL(sql);
+				execTime += TimeUtil.getPassedSeconds();
+			} else {
+				client.executeSQL(sql);
+			}
 		}
-		System.out.println("ABM Execution time: " + execTime);
+
+		Log.log("ABM Execution time: " + execTime);
 		return rs;
 	}
 
-	protected ResultSet execBootstrap(List<String> sqls) {
+	protected ResultSet execBootstrap(List<String> sqls) throws SQLException {
 		ResultSet rs = null;
 		execTime = 0;
 
-		try {
-			client.executeSQL("set hive.abm = false");
-			client.executeSQL("set mapred.reduce.tasks= 112");
+		client.executeSQL("set hive.abm = false");
+		client.executeSQL("set mapred.reduce.tasks= 112");
 
-			for(String sql:sqls) {
-				if(sql.contains("--") || sql.startsWith("set"))
-					continue;
-				else if(!sql.toLowerCase().contains("drop")) {
-					TimeUtil.start();
-					rs = client.executeSQL(sql);
-					execTime += TimeUtil.getPassedSeconds();
-				}
-				else {
-					client.equals(sql);
-				}
+		for(String sql:sqls) {
+			if(sql.contains("--") || sql.startsWith("set"))
+				continue;
+			else if(!sql.toLowerCase().contains("drop")) {
+				TimeUtil.start();
+				rs = client.executeSQL(sql);
+				execTime += TimeUtil.getPassedSeconds();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			else {
+				client.equals(sql);
+			}
 		}
-		System.out.println("Bootstrap Execution time: " + execTime);
 
+		Log.log("Bootstrap Execution time: " + execTime);
 		return rs;
 	}
 
@@ -132,6 +125,7 @@ public class Server extends NanoHTTPD {
 				for(Map.Entry<String, String> entry:paras.entrySet()) {
 					System.out.println(entry.getKey() + "@@" + entry.getValue());
 				}
+				
 				if (uri.contains("favicon") || uri.contains("http")) {
 					return null;
 				}
@@ -265,6 +259,8 @@ public class Server extends NanoHTTPD {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			mbuffer = Asset.getException(e);
+			return new Response(Status.OK, Type.MIME_HTML, mbuffer);
 		}
 
 		return null;
