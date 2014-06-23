@@ -49,14 +49,23 @@ public class Asset {
 		return new ByteArrayInputStream(exceptionInfo.getBytes());
 	}
 	
-	public static InputStream getPlan(boolean isAbmEligible, boolean isCloseEligible, boolean isBootstrapEligible, String exceptionInfo) throws IOException {
+	public static InputStream getPlan(boolean isAbmEligible, String exceptionInfo) throws IOException {
+		boolean isCloseEligible = true;
+		boolean isBootstrapEligible = true;
+		
 		String plan = "none";
 		if (isAbmEligible) {
 			//copy plan file from remote machine
 			Scp.execute(Conf.remotePlanFile, Conf.planFile);
-			plan = FileSystem.readFileAsString(Conf.planFile);
+			String[] arrs = FileSystem.readFileAsString(Conf.planFile).split("|");
+			plan = arrs[0];
+			isCloseEligible = Boolean.parseBoolean(arrs[1]);
 			Log.log("JsonPlan From Remote: " + plan);
 		}
+		else {
+			isCloseEligible = false;
+		}
+		
 		
 		String notice = "";
 		if (isAbmEligible) {
@@ -77,6 +86,7 @@ public class Asset {
 			notice += "0|\n";
 		}
 		
+		//exceptionInfo for abm
 		notice += exceptionInfo + "|\n";
 		
 		String rs = notice + plan;

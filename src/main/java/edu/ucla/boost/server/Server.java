@@ -44,7 +44,7 @@ public class Server extends NanoHTTPD {
 			String tbl = words[0].toLowerCase();
 			if(tbl.equals("lineitem")||tbl.equals("tmp17")||tbl.equals("tmp18")) {
 				sampleSize = 6000000;
-			} else if (tbl.equals("partsupp")) {
+			} else if (tbl.equals("partsupp") || tbl.equals("tmp11")) {
 				sampleSize = 800000;
 			} else if (tbl.equals("customer")) {
 				sampleSize = 150000;
@@ -186,30 +186,22 @@ public class Server extends NanoHTTPD {
 							PageHelper.makeAll(rs, params, new Time(abmTime, closeFormTime, vanillaTime)));
 				} else if (uri.equals("/plan")) {
 					List<String> sqls = params.getQueryList();
-					//only execute "select" here, potential bugs for not executing "set"
 					boolean isAbmEligible = true;
-					boolean isCloseEligible = true;
-					boolean isBootstrapEligible = true;
+					
 					String exceptionInfo = "none";
 					String drop = null;
 					for (String sql: sqls) {
 						if (sql.toLowerCase().startsWith("select")) {
-							if (sql.toLowerCase().contains("min") || sql.toLowerCase().contains("max")) {
-								isBootstrapEligible = false;
-								isAbmEligible = false;
-								isCloseEligible = false;
-							} else {
 								try {
 									client.executeSQL("explain " + sql);
 								}
 								catch (SQLException e) {
 									isAbmEligible = false;
-									isCloseEligible = false;
 									String[] arr = e.getMessage().split(":");
 									exceptionInfo = arr[arr.length-1];
 									e.printStackTrace();
 								}
-							}
+							
 						} else if (sql.startsWith("--")) {
 							client.executeSQL(sql.replace("--", "").trim());
 						} else if(!sql.contains("drop")) {
@@ -218,7 +210,7 @@ public class Server extends NanoHTTPD {
 							drop = sql;
 						}
 					}
-					mbuffer = Asset.getPlan(isAbmEligible, isCloseEligible, isBootstrapEligible, exceptionInfo);
+					mbuffer = Asset.getPlan(isAbmEligible, exceptionInfo);
 					if(drop != null) {
 						client.executeSQL(drop);
 					}
