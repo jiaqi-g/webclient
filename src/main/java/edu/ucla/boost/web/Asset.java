@@ -42,6 +42,13 @@ public class Asset {
 		return open(defaultPage);
 	}
 	
+	public static InputStream getException(Exception e) {
+		String[] arr = e.getMessage().split(":");
+		String exceptionInfo = "Exception: " + arr[arr.length-1];
+		
+		return new ByteArrayInputStream(exceptionInfo.getBytes());
+	}
+	
 	public static InputStream getPlan(boolean isAbmEligible, boolean isCloseEligible, boolean isBootstrapEligible, String exceptionInfo) throws IOException {
 		String plan = "none";
 		if (isAbmEligible) {
