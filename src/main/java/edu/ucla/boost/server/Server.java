@@ -173,13 +173,18 @@ public class Server extends NanoHTTPD {
 					double closeFormTime = 0.0;
 					double vanillaTime = 0.0;
 					if (sqls.size() > 0) {
+						Log.log("run 1st abm (result discarded) ...");
+						execABM(sqls);
+						
 						Log.log("run vanilla bootstrap ...");
 						execBootstrap(sqls);
 						vanillaTime= execTime;
-						Log.log("run abm ...");
+						
+						Log.log("run 2nd abm (abm) ...");
 						rs = execABM(sqls);
 						closeFormTime = execTime;
-						Log.log("run closed form ...");
+						
+						Log.log("run 3rd abm (closed form) ...");
 						execABM(sqls);
 						abmTime = execTime;
 					} else {
