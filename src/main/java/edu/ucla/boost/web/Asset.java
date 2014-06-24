@@ -49,6 +49,10 @@ public class Asset {
 		return new ByteArrayInputStream(exceptionInfo.getBytes());
 	}
 	
+	public static InputStream getNone() {
+		return new ByteArrayInputStream("none".getBytes());
+	}
+	
 	public static InputStream getPlan(boolean isAbmEligible, String exceptionInfo) throws IOException {
 		boolean isCloseEligible = true;
 		boolean isBootstrapEligible = true;

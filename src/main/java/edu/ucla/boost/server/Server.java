@@ -251,6 +251,8 @@ public class Server extends NanoHTTPD {
 					if(t != null) {
 						t.interrupt();
 					}
+					mbuffer = Asset.getNone();
+					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains(".txt")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
