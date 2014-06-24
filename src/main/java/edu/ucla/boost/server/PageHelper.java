@@ -108,6 +108,7 @@ public class PageHelper {
 		List<List<Object>> body = new ArrayList<List<Object>>();
 		List<List<NormalDist>> dists = new ArrayList<List<NormalDist>>();
 		
+		int index = 0;
 		/*
 		 * construct body
 		 */
@@ -159,6 +160,8 @@ public class PageHelper {
 				}
 			}
 			body.add(row);
+			Log.log("Dist in row " + index + " " + distLst);
+			index++;
 			dists.add(distLst);
 		}
 		
