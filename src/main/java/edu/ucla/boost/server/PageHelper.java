@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 
 import org.markdown4j.Markdown4jProcessor;
@@ -11,14 +12,13 @@ import org.markdown4j.Markdown4jProcessor;
 import edu.ucla.boost.common.Log;
 import edu.ucla.boost.common.Time;
 import edu.ucla.boost.http.ParamUtil;
-import edu.ucla.boost.math.Confidence;
 import edu.ucla.boost.math.NormalDist;
-import edu.ucla.boost.math.Quantile;
 
 public class PageHelper {
 
 	static Markdown4jProcessor processor = new Markdown4jProcessor();
-
+	public static final int pointsAfterDots = 6;
+	
 	private static String makePage(String title, String body) {
 		StringBuilder res = new StringBuilder();
 		//body = body.replaceAll("(\r\n|\n)", "<br />");
@@ -80,14 +80,36 @@ public class PageHelper {
 		return eval.make();
 	}
 
+	/*
 	public static String makeTable(ResultSet rs, ParamUtil params)  throws SQLException {
 		EvaluationResultHelper eval = new EvaluationResultHelper();
 		setTable(rs, params, eval);
 		return eval.make();
-	}
+	}*/
 
 	private static void setTime(Time time, EvaluationResultHelper eval) throws SQLException {
 		eval.setTime(time);
+	}
+	
+	private static String format(double value) {
+		Formatter fmt = new Formatter();
+	    String rs = fmt.format("%." + pointsAfterDots +"e", value).toString();
+	    fmt.close();
+	    
+	    return rs;
+	}
+	
+	private static String formatConfidence(String quantile) {
+		String[] tokens = quantile.substring(1, quantile.length() - 1).split(",");
+		
+		Formatter fmt1 = new Formatter();
+		Formatter fmt2 = new Formatter();
+	    String rs = "[" + fmt1.format("%." + pointsAfterDots +"e", Double.parseDouble(tokens[0])).toString() + ", " 
+	    				+ fmt2.format("%." + pointsAfterDots +"e", Double.parseDouble(tokens[1])).toString() + "]";
+	    fmt1.close();
+	    fmt2.close();
+	    
+	    return rs;
 	}
 
 	private static void setTable(ResultSet rs, ParamUtil params, EvaluationResultHelper eval) throws SQLException {
@@ -140,11 +162,13 @@ public class PageHelper {
 							System.out.println("Unknown Results");
 						}
 						
-						String s = "" + mean + " ";
+						String s = "" + format(mean) + " ";
 						if(doVariance) {
-							s += "(" + variance + ")";
-						} else if(doQuantile || doConfidence) {
-							s += "(" + val + ")";
+							s += "(" + format(variance) + ")";
+						} else if (doQuantile) {
+							s += "(" + format(Double.parseDouble(val)) + ")";
+						} else if (doConfidence) {
+							s += "(" + formatConfidence(val) + ")";
 						}
 						
 						row.add(s);
@@ -177,13 +201,13 @@ public class PageHelper {
 			
 			if (dists.get(0).get(i-1) != null) {
 				if (doVariance) {
-					colName += "_Variance";
+					colName += " (variance)";
 				}
 				if (doQuantile) {
-					colName += "_" + params.getQuantile().getQuantile() + "%";
+					colName += " (" + params.getQuantile().getQuantile() + "%)";
 				}
 				if (doConfidence) {
-					colName += "_[" + params.getConfidence().getConfidenceFrom() + "%, " +  params.getConfidence().getConfidenceTo() + "%]";
+					colName += " ([" + params.getConfidence().getConfidenceFrom() + "%, " +  params.getConfidence().getConfidenceTo() + "%])";
 				}
 			}
 			

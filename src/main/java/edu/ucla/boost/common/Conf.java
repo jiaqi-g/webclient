@@ -9,7 +9,8 @@ public class Conf {
 	 */
 	public static String user = "victor";
 	public static String websitePath = "/home/victor/boost_website";
-	public static String serverName = "131.179.64.66"; //"localhost";
+	public static String serverName = "131.179.64.66"; 
+	//public static String serverName = "localhost";
 	
 	public static String remotePlanFile = "hadoop-user@131.179.64.66:~/sharks/boost/shark/json_plan.txt";
 	//public static String remotePlanFile = "victor@localhost:~/shark/shark/json_plan.txt";

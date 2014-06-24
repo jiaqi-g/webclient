@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.Map;
 
+import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.http.ParameterFilter;
 import edu.ucla.boost.jdbc.JdbcClient;
 
@@ -37,13 +38,14 @@ public class TestServer {
 			Map<String, Object> params = (Map<String, Object>) t.getAttribute("parameters");
 			String query = (String) params.get("content");
 			String res = null;
+			/*
 			try {
-				res = PageHelper.makeTable(new JdbcClient().executeSQL(query), null);
+				res = PageHelper.makeAll(new JdbcClient().executeSQL(query), new ParamUtil(params), null);
 			}
 			catch (SQLException e) {
 				res = "SQL execution error! \n" + e.getMessage();
 				e.printStackTrace();
-			}
+			}*/
 			
 			//encode to utf-8 to avoid errors
 			ByteBuffer rs = Charset.forName("UTF-8").encode(PageHelper.makeOutlinePage(res));

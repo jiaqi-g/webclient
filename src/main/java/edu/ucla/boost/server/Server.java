@@ -152,9 +152,12 @@ public class Server extends NanoHTTPD {
 						sqls.add(0, "set hive.abm.measure = 2");
 						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
 					}
+					TimeUtil.start();
 					ResultSet rs = execABM(sqls);
+					double t = TimeUtil.getPassedSeconds();
+					
 					return new Response(Status.OK, Type.MIME_HTML,
-							PageHelper.makeTable(rs, params));
+							PageHelper.makeAll(rs, params, new Time(t, t, 0)));
 				} else if (uri.equals("/compare")) {
 					List<String> sqls = params.getQueryList();
 					if(params.doVariance() || params.doConfidence()) {
