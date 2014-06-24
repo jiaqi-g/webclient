@@ -270,7 +270,7 @@ public class Server extends NanoHTTPD {
 
 		return null;
 	}
-
+	
 	public static void main(String[] args) {
 		if (args.length != 1) {
 			Log.warn("Missing config file path. Use conf in Programs.");
