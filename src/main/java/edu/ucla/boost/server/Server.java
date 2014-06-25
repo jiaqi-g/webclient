@@ -149,8 +149,8 @@ public class Server extends NanoHTTPD {
 					List<String> sqls = params.getQueryList();
 					if(params.doVariance() || params.doConfidence()) {
 						sqls.add(0, "set hive.abm.measure = 3");
-						sqls.add(1, "set hive.abm.quantilePct = " + params.getConfidence().getConfidenceFrom());
-						sqls.add(2, "set hive.abm.quantilePct = " + params.getConfidence().getConfidenceTo());
+						sqls.add(1, "set hive.abm.conf.inv.lower = " + params.getConfidence().getConfidenceFrom());
+						sqls.add(2, "set hive.abm.conf.inv.upper = " + params.getConfidence().getConfidenceTo());
 					} else {
 						sqls.add(0, "set hive.abm.measure = 2");
 						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
@@ -165,8 +165,8 @@ public class Server extends NanoHTTPD {
 					List<String> sqls = params.getQueryList();
 					if(params.doVariance() || params.doConfidence()) {
 						sqls.add(0, "set hive.abm.measure = 3");
-						sqls.add(1, "set hive.abm.quantilePct = " + params.getConfidence().getConfidenceFrom());
-						sqls.add(2, "set hive.abm.quantilePct = " + params.getConfidence().getConfidenceTo());
+						sqls.add(1, "set hive.abm.conf.inv.lower = " + params.getConfidence().getConfidenceFrom());
+						sqls.add(2, "set hive.abm.conf.inv.upper = " + params.getConfidence().getConfidenceTo());
 					} else {
 						sqls.add(0, "set hive.abm.measure = 2");
 						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
