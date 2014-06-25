@@ -91,16 +91,14 @@ public class PageHelper {
 		eval.setTime(time);
 	}
 	
-	/*
 	private static String format(double value) {
 		Formatter fmt = new Formatter();
 	    String rs = fmt.format("%." + pointsAfterDots +"e", value).toString();
 	    fmt.close();
 	    
 	    return rs;
-	}*/
+	}
 	
-	/*
 	private static String formatConfidence(String quantile) {
 		String[] tokens = quantile.substring(1, quantile.length() - 1).split(",");
 		
@@ -112,7 +110,7 @@ public class PageHelper {
 	    fmt2.close();
 	    
 	    return rs;
-	}*/
+	}
 
 	private static void setTable(ResultSet rs, ParamUtil params, EvaluationResultHelper eval) throws SQLException {
 		if (rs == null) {
@@ -164,13 +162,13 @@ public class PageHelper {
 							System.out.println("Unknown Results");
 						}
 						
-						String s = "" + mean + " ";
+						String s = "" + format(mean) + " ";
 						if(doVariance) {
-							s += "(" + variance + ")";
+							s += "(" + format(variance) + ")";
 						} else if (doQuantile) {
-							s += "(" + val + ")";
+							s += "(" + format(Double.parseDouble(val)) + ")";
 						} else if (doConfidence) {
-							s += "(" + val + ")";
+							s += "(" + formatConfidence(val) + ")";
 						}
 						
 						row.add(s);
