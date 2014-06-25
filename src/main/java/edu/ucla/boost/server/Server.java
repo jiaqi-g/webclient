@@ -139,6 +139,9 @@ public class Server extends NanoHTTPD {
 				} else if (uri.contains(".png")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PNG, mbuffer); 
+				} else if (uri.contains(".gif")) {
+					mbuffer = Asset.open(uri);
+					return new Response(Status.OK, Type.MIME_PNG, mbuffer); 
 				} else if (uri.contains(".htm") || uri.contains(".html")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
