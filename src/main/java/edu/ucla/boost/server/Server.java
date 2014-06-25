@@ -125,7 +125,7 @@ public class Server extends NanoHTTPD {
 				for(Map.Entry<String, String> entry:paras.entrySet()) {
 					System.out.println(entry.getKey() + "@@" + entry.getValue());
 				}
-				
+
 				if (uri.contains("favicon") || uri.contains("http")) {
 					return null;
 				}
@@ -158,7 +158,7 @@ public class Server extends NanoHTTPD {
 					TimeUtil.start();
 					ResultSet rs = execABM(sqls);
 					double t = TimeUtil.getPassedSeconds();
-					
+
 					return new Response(Status.OK, Type.MIME_HTML,
 							PageHelper.makeAll(rs, params, new Time(t, t, 0)));
 				} else if (uri.equals("/compare")) {
@@ -178,15 +178,15 @@ public class Server extends NanoHTTPD {
 					if (sqls.size() > 0) {
 						Log.log("run 1st abm (result discarded) ...");
 						execABM(sqls);
-						
+
 						Log.log("run vanilla bootstrap ...");
 						execBootstrap(sqls);
 						vanillaTime= execTime;
-						
+
 						Log.log("run 2nd abm (abm) ...");
 						rs = execABM(sqls);
 						closeFormTime = execTime;
-						
+
 						Log.log("run 3rd abm (closed form) ...");
 						execABM(sqls);
 						abmTime = execTime;
@@ -197,12 +197,14 @@ public class Server extends NanoHTTPD {
 							PageHelper.makeAll(rs, params, new Time(abmTime, closeFormTime, vanillaTime)));
 				} else if (uri.equals("/plan")) {
 					List<String> sqls = params.getQueryList();
-					
+
 					boolean isAbmEligible = true;					
 					String exceptionInfo = "none";
-					
+
 					for (String sql: sqls) {
 						if (sql.toLowerCase().startsWith("select")) {
+							//do nothing
+						} else if (sql.toLowerCase().startsWith("explain")) {
 							//do nothing
 						} else if (sql.startsWith("--")) {
 							//set
@@ -212,21 +214,25 @@ public class Server extends NanoHTTPD {
 							client.executeSQL(sql);
 						}
 					}
-					
+
 					for (String sql: sqls) {
 						if (sql.toLowerCase().startsWith("select")) {
-								try {
-									client.executeSQL("explain " + sql);
-								}
-								catch (SQLException e) {
-									isAbmEligible = false;
-									String[] arr = e.getMessage().split(":");
-									exceptionInfo = arr[arr.length-1];
-									e.printStackTrace();
-								}
+							sql = "explain " + sql;
+						}
+
+						if (sql.toLowerCase().startsWith("explain")) {
+							try {
+								client.executeSQL(sql);
+							}
+							catch (SQLException e) {
+								isAbmEligible = false;
+								String[] arr = e.getMessage().split(":");
+								exceptionInfo = arr[arr.length-1];
+								e.printStackTrace();
+							}
 						}
 					}
-					
+
 					mbuffer = Asset.getPlan(isAbmEligible, exceptionInfo);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains(".hive")) {
@@ -273,7 +279,7 @@ public class Server extends NanoHTTPD {
 
 		return null;
 	}
-	
+
 	public static void main(String[] args) {
 		if (args.length != 1) {
 			Log.warn("Missing config file path. Use conf in Programs.");
