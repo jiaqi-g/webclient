@@ -43,7 +43,7 @@ public class Server extends NanoHTTPD {
 		} else {
 			String tbl = words[0].toLowerCase();
 			if(tbl.equals("lineitem")||tbl.equals("tmp17")||tbl.equals("tmp18")) {
-				sampleSize = 6000000;
+				sampleSize = 6000379;
 			} else if (tbl.equals("partsupp") || tbl.equals("tmp11")) {
 				sampleSize = 800000;
 			} else if (tbl.equals("customer")) {
