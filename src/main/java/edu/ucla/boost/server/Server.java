@@ -153,7 +153,7 @@ public class Server extends NanoHTTPD {
 						sqls.add(2, "set hive.abm.conf.inv.upper = " + params.getConfidence().getConfidenceTo());
 					} else {
 						sqls.add(0, "set hive.abm.measure = 2");
-						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
+						sqls.add(1, "set hive.abm.quantile = " + params.getQuantile().getQuantile());
 					}
 					TimeUtil.start();
 					ResultSet rs = execABM(sqls);
@@ -169,7 +169,7 @@ public class Server extends NanoHTTPD {
 						sqls.add(2, "set hive.abm.conf.inv.upper = " + params.getConfidence().getConfidenceTo());
 					} else {
 						sqls.add(0, "set hive.abm.measure = 2");
-						sqls.add(1, "set hive.abm.quantilePct = " + params.getQuantile().getQuantile());
+						sqls.add(1, "set hive.abm.quantile = " + params.getQuantile().getQuantile());
 					}
 					ResultSet rs = null;
 					double abmTime = 0.0;
