@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
 
-    <title>Analytical Bootstrap Demo</title>
+    <title>Temporal Sparql Demo</title>
 
     <link href="jquery-ui.css" rel="stylesheet">
 
@@ -60,19 +60,15 @@
       <div class="logo">
       </div>
       <div class="masthead" >
-        <h1 class="text-muted" >ABS: a System for Scalable Approximate Queries </h1>
+        <h1 class="text-muted" >Temporal Sparql: a System for Scalable Temporal Queries </h1>
         <ul class="nav nav-justified" style = "max-width: 960px;">
           <li class="home-bar"><a href="#" onClick="javascript:show(1)">Home</a></li>
-          <li class="veri-bar"><a href="#" onClick="javascript:show(2)">Applicability Test</a></li>
-          <li class="abm-bar active"><a href="#" onClick="javascript:show(3)">Analytical Bootstrap</a></li>
-          <li class="close-bar"><a href="#" onClick="javascript:show(4)">Close-Form Formula</a></li>
-          <li class="vanilla-bar"><a href="#" onClick="javascript:show(5)">Standard Bootstrap</a></li>
+          <li class="abm-bar active"><a href="#" onClick="javascript:show(3)">Temporal Sparql</a></li>
         </ul>
       </div>
 
       <!-- Home Section -->
       <div class="row row-home">
-
         <!-- ABS overview -->
         <div class="col-md-10 col-sm-10">
 		      <p class="STYLE4">  &nbsp;   &nbsp;  &nbsp;</p>
@@ -135,93 +131,19 @@
                <img src="img/performance.png" style="width: 100%; max-width: 850px;">
             </div>
         </div>
-      </div>	  
-		  
-      <!-- Eligibility Verification Section -->
-      <div class="row row-veri">
-        <div class="col-md-10 col-sm-10">
-		        <p class="STYLE4">  &nbsp;   &nbsp;  &nbsp;</p>
-		        <font style="line-height:1.5;">
-      	      <p class="STYLE1">Try a query your are interested in! ABS will compile the input query to a query plan explained in relational algebra, and provide a visualization of the query plan. Based on this query plan, ABS also checks whether it is eligible for applying efficient analytical bootstrap method and/or closed-form method to estimate
-		          the approximation error of the query. </p>
-		        </font>
-            <div class="col-md-7">
-            <h1><textarea class="ta_input form-control" rows="8" placeholder="Enter Query Here!" required></textarea></h1>
-            </div>
-            <div class="col-md-5 check_right">
-              <form>
-                <div class="form-group form-inline">
-                  <div class="tpchDiv">
-                    <select class="tpchMenu_input menu" onchange='javascript:fillTpch("input")'>
-                    </select>
-                  </div>
-                  <div class="percentDiv">
-                    <p>
-                      <select class="percentMenu_input menu" onchange='javascript:fillTpch("input")'>
-                      </select>
-                    </p>
-                  </div>
-                </div>
-              </form>
-              <div id="buttoncontainer">
-                <button id="imc_style" class="check_btn" style="margin-left:25px" onclick='javascript:plan()'>&nbsp; Applicability Test &nbsp;</button>
-              </div>
-            </div>
-        </div>
-        <div class="col-md-10 col-sm-10">
-            <form class="form-signin">
-              <div class="panel panel-default">
-                <div class="panel-heading"><h3 class="tlt panel-title">Analytical Bootstrap Query Plan <div class="schema" onClick='javascript:schema()'>schema</div> </h3></div>
-                <div class="panel-body"><div class="pad"></div><div class="plan"><!--img src="sql.png" /--></div></div>
-              </div>
-            </form>
-        </div>
-
-        <div id="buttoncontainer"><button id="imc_style" class="abm_btn" onClick='javascript:show(3)'>&nbsp; Analytical Bootstrap &nbsp;</button></div>
-    		<div id="buttoncontainer"><button id="imc_style" class="close_btn" onClick='javascript:show(4)'>Close-Form Formula</button></div>
-    		<div id="buttoncontainer"><button id="imc_style" class="vanilla_btn" onClick='javascript:show(5)'>&nbsp; Standard Bootstrap &nbsp;</button></div>
       </div>
-
-
 
       <!-- Analytical Bootstrap Section -->
       <div class="row row-abm">
- 		<div class="col-md-5">
+        <div class="col-md-5">
           <form class="form-signin">
             <h1><textarea class="ta_abm form-control" rows="10" placeholder="Enter Query Here!" required></textarea></h1>
           </form>
         </div>
+        
         <div class="col-md-5">
           <p>&nbsp;</p>
           <form role="form">
-            <div class="form-group form-inline">
-              <div class="checkbox">
-                <label>
-		<input  id = 'varRadio' name ='stats' type="radio" checked="checked"> Variance
-		</label>
-              </div>
-            </div>
-
-            <div class="form-group form-inline">
-              <div class="cb checkbox">
-                <label>
-		<input id = 'quantileRadio' name ='stats' type="radio" onClick="javascript:quantileCheckClick()"> Quantile 
-		</label>
-              </div>
-              	<input type="text" class="num form-control quantileBox" id="quantilePct" placeholder="5%" disabled>
-              <p></p>
-              <div class="cb checkbox">
-                <label>
-		<input id = 'confidenceRadio' name ='stats' type="radio" onClick="javascript:confidenceCheckClick()"> Confidence Interval 
-		</label>
-              </div>
-	     
-              <input type="text" class="num form-control confFrom" id="confFrom" placeholder="5%" disabled>
-              &nbsp;To&nbsp;
-              <input type="text" class="num form-control confTo" id="confTo" placeholder="95%" disabled>
-	      
-            </div>
-
             <div class="form-group form-inline" style=" height: 30px">
               <div class="tpchDiv">
                 <select class="tpchMenu_abm menu" onchange='javascript:fillTpch("abm")'>
@@ -252,132 +174,6 @@
               <div class="tableWrapper myTab_abm tab">
               </div>
             </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Closed Form Section -->
-      <div class="row row-close">
-        
-        <div class="col-md-5">
-          <form class="form-signin">
-            <h1><textarea class="ta_close form-control" rows="10" placeholder="Enter Query Here!" required></textarea></h1>
-          </form>
-        </div>
-
-        <div class="col-md-5"> 
-        <p>&nbsp;</p>  
-          <form role="form">
-		        <div class="form-group form-inline">
-              <div class="checkbox">
-                <label>
-                <input  id = 'varRadio2' name ='stats' type="radio" checked="checked"> Variance
-                </label>
-              </div>
-            </div>
-
-            <div class="form-group form-inline">
-              <div class="cb checkbox">
-                <label>
-                <input id = 'quantileRadio2' name ='stats' type="radio" onClick="javascript:quantileCheckClick()"> Quantile 
-                </label>
-              </div>
-                <input type="text" class="num form-control quantileBox" id="quantilePct2" placeholder="5%" disabled>
-                <p></p>
-              <div class="cb checkbox">
-                <label>
-                <input id = 'confidenceRadio2' name ='stats' type="radio" onClick="javascript:confidenceCheckClick2()"> Confidence Interval 
-                </label>
-              </div>
-
-              <input type="text" class="num form-control confFrom" id="confFrom2" placeholder="5%" disabled>
-              &nbsp;To&nbsp;
-              <input type="text" class="num form-control confTo" id="confTo2" placeholder="95%" disabled>
-        
-            </div>
-		  
-            <div class="form-group form-inline" style=" height: 30px">
-              <div class="tpchDiv">
-                <select class="tpchMenu_close menu" onchange='javascript:fillTpch("close")'>
-                </select>
-              </div>
-              <div class="percentDiv">
-                <p>
-                  <select class="percentMenu_close menu" onchange='javascript:fillTpch("close")'>
-                  </select>
-                </p>
-              </div>
-            </div>
-            <div class="form-group form-inline" >
-              <div class="execBtn2">
-                <a class="btn btn-primary" href='javascript:execClose()' role="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-              </div>
-              <div class="compareBtn">
-                <a class="btn btn-primary" href='javascript:compare()' role="button">Compare w/ Analytical Bootstrap</a>
-              </div> 
-            </div>
-          </form>
-        </div>
-
-        <div class="col-md-10">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">Evaluation Results <span><h5 class="time_close"></h5></span>
-                <div class="schema" onClick='javascript:schema()'>schema</div>
-              </h3>
-            </div>
-            <div class="panel-body">
-              <div class="tableWrapper myTab_close tab">
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Vanilla Section -->
-      <div class="row row-vanilla">
-        
-        <div class="col-md-5">
-          <form class="form-signin">
-            <h1><textarea class="ta_vanilla form-control" rows="9" placeholder="Please choose a TPCH Query!" required></textarea></h1>
-          </form>
-        </div>
-
-        <div class="col-md-5">
-		
-          <p>&nbsp;</p>
-          <form role="form">
-            <div class="form-group form-inline" style="margin-top: 40px; height: 30px">
-              <div class="tpchDiv">
-                <select class="tpchMenu_vanilla menu" onchange='javascript:fillTpch("vanilla")'>
-                </select>
-              </div>
-			        <div class="percentDiv">
-                <p>
-                  <select class="percentMenu_vanilla menu" onchange='javascript:fillTpch("vanilla")'>
-                  </select>
-                </p>
-              </div>
-            </div>
-            <div class="form-group form-inline">
-              <div class="execBtn2">
-                <a class="btn btn-primary" href='javascript:execVanilla()' role="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-              </div>
-              <div class="compareBtn">
-                <a class="btn btn-primary" href='javascript:stop_interval()' role="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-              </div>
-            </div>
-            <div class="vanilla_running">
-              Running ...
-            </div>
-          </form>
-        </div>
-        <div class="col-md-10">
-          <div class="col-md-4" id="vanilla_performance_div">
-          </div>
-          <div class="col-md-8" id="vanilla_error_div">
           </div>
         </div>
       </div>

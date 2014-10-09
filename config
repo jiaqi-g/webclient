@@ -1,8 +1,8 @@
 # need to specify
-connectDB = true
+connectDB = false
 debug = true
 user = victor
-websitePath = /home/victor/boost_website
+websitePath = website
 serverName = 131.179.64.66
 
 # optional

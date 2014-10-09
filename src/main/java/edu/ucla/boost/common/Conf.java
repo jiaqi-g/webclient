@@ -9,7 +9,7 @@ public class Conf {
 	 * Make sure user running boost_client can access hadoop-user@131.179.64.66 by ssh passwordless
 	 */
 	public static String user = "victor";
-	public static String websitePath = "/home/victor/boost_website";
+	public static String websitePath = "website";
 	public static Integer websitePort = 8080;
 	
 	public static String protocolName = "hive";
