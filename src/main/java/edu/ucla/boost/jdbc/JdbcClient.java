@@ -12,14 +12,13 @@ import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.Log;
 
 public class JdbcClient {
-	private static String driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
 	
 	private Connection con = null;
 	private Statement stmt = null;
 
 	static {
 		try {
-			Class.forName(driverName);
+			Class.forName(Conf.driverName);
 			DriverManager.getConnection(Conf.getConnectionAddress(), "" , "");
 			//only support db called "default"
 		} catch (Exception e) {
@@ -41,16 +40,6 @@ public class JdbcClient {
 	public ResultSet executeSQL(String sql) throws SQLException {
 		stmt = con.createStatement();
 		return stmt.executeQuery(prepareSQL(sql));
-	}
-
-	public void openABM() throws SQLException {
-		String sql = "set hive.abm=true";
-		executeSQL(sql);
-	}
-	
-	public void closeABM() throws SQLException {
-		String sql = "set hive.abm=false";
-		executeSQL(sql);
 	}
 	
 	public void close() {

@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-import edu.ucla.boost.web.Asset;
-
 public class Scp {
-	
 	public static String execute(String remotePath, String path) {
 		try {
 			//sudo -u victor ssh hadoop-user@131.179.64.66
@@ -29,9 +26,5 @@ public class Scp {
 			e.printStackTrace();
 		}
 		return "";
-	}
-	
-	public static void main(String[] args) {
-		execute(Conf.remotePlanFile, Conf.planFile);
 	}
 }

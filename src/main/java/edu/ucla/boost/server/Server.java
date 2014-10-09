@@ -15,13 +15,11 @@ import java.util.Map;
 import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.ConfUtil;
 import edu.ucla.boost.common.Log;
-import edu.ucla.boost.common.Time;
 import edu.ucla.boost.common.TimeUtil;
 import edu.ucla.boost.http.ParamUtil;
 import edu.ucla.boost.jdbc.JdbcClient;
 import edu.ucla.boost.web.Asset;
 import edu.ucla.boost.web.Type;
-import edu.ucla.boost.web.VanillaBootstrapRunner;
 
 public class Server extends NanoHTTPD {
 
@@ -145,117 +143,9 @@ public class Server extends NanoHTTPD {
 				} else if (uri.contains(".htm") || uri.contains(".html")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_HTML, mbuffer);
-				} else if (uri.equals("/search")) {
-					List<String> sqls = params.getQueryList();
-					if(params.doVariance() || params.doConfidence()) {
-						sqls.add(0, "set hive.abm.measure = 3");
-						sqls.add(1, "set hive.abm.conf.inv.lower = " + params.getConfidence().getConfidenceFrom());
-						sqls.add(2, "set hive.abm.conf.inv.upper = " + params.getConfidence().getConfidenceTo());
-					} else {
-						sqls.add(0, "set hive.abm.measure = 2");
-						sqls.add(1, "set hive.abm.quantile = " + params.getQuantile().getQuantile());
-					}
-					TimeUtil.start();
-					ResultSet rs = execABM(sqls);
-					double t = TimeUtil.getPassedSeconds();
-
-					return new Response(Status.OK, Type.MIME_HTML,
-							PageHelper.makeAll(rs, params, new Time(t, t, 0)));
-				} else if (uri.equals("/compare")) {
-					List<String> sqls = params.getQueryList();
-					if(params.doVariance() || params.doConfidence()) {
-						sqls.add(0, "set hive.abm.measure = 3");
-						sqls.add(1, "set hive.abm.conf.inv.lower = " + params.getConfidence().getConfidenceFrom());
-						sqls.add(2, "set hive.abm.conf.inv.upper = " + params.getConfidence().getConfidenceTo());
-					} else {
-						sqls.add(0, "set hive.abm.measure = 2");
-						sqls.add(1, "set hive.abm.quantile = " + params.getQuantile().getQuantile());
-					}
-					ResultSet rs = null;
-					double abmTime = 0.0;
-					double closeFormTime = 0.0;
-					double vanillaTime = 0.0;
-					if (sqls.size() > 0) {
-						Log.log("run 1st abm (result discarded) ...");
-						execABM(sqls);
-
-						Log.log("run vanilla bootstrap ...");
-						execBootstrap(sqls);
-						vanillaTime= execTime;
-
-						Log.log("run 2nd abm (abm) ...");
-						rs = execABM(sqls);
-						closeFormTime = execTime;
-
-						Log.log("run 3rd abm (closed form) ...");
-						execABM(sqls);
-						abmTime = execTime;
-					} else {
-						return null;
-					}
-					return new Response(Status.OK, Type.MIME_HTML,
-							PageHelper.makeAll(rs, params, new Time(abmTime, closeFormTime, vanillaTime)));
-				} else if (uri.equals("/plan")) {
-					List<String> sqls = params.getQueryList();
-
-					boolean isAbmEligible = true;					
-					String exceptionInfo = "none";
-
-					for (String sql: sqls) {
-						if (sql.toLowerCase().startsWith("select")) {
-							//do nothing
-						} else if (sql.toLowerCase().startsWith("explain")) {
-							//do nothing
-						} else if (sql.startsWith("--")) {
-							//set
-							client.executeSQL(sql.replace("--", "").trim());
-						} else {
-							//create & drop
-							client.executeSQL(sql);
-						}
-					}
-
-					for (String sql: sqls) {
-						if (sql.toLowerCase().startsWith("select")) {
-							sql = "explain " + sql;
-						}
-
-						if (sql.toLowerCase().startsWith("explain")) {
-							try {
-								client.executeSQL(sql);
-							}
-							catch (SQLException e) {
-								isAbmEligible = false;
-								String[] arr = e.getMessage().split(":");
-								exceptionInfo = arr[arr.length-1];
-								e.printStackTrace();
-							}
-						}
-					}
-
-					mbuffer = Asset.getPlan(isAbmEligible, exceptionInfo);
-					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
 				} else if (uri.contains(".hive")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_PLAINTEXT, mbuffer);
-				} else if (uri.contains("vanilla")) {
-					if(t != null) {
-						t.interrupt();
-					}
-					List<String> sqls = params.getQueryList();
-					execABM(sqls);
-					double abmTime = execTime;
-
-					if (sqls.size() > 0) {
-						VanillaBootstrapRunner runner = new VanillaBootstrapRunner(51, sqls, Conf.websitePath + "/", abmTime);
-						t = new Thread(runner);
-						t.start();
-						mbuffer = Asset.open(uri);
-						return new Response(Status.OK, Type.MIME_HTML, mbuffer);
-					}
-					else {
-						return null;
-					}
 				} else if (uri.contains("stopInterval")) {
 					if(t != null) {
 						t.interrupt();
