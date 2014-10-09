@@ -1,0 +1,19 @@
+--set hive.abm = true;
+--set mapred.reduce.tasks= 112;
+--set hive.abm.sampled.table = lineitem_SampleSize_cached;
+
+select
+        l_returnflag,
+        l_linestatus,
+        sum(l_quantity * [SCALE]) as sum_quan,
+	sum(l_extendedprice * [SCALE]) as sum_price,
+	sum(l_extendedprice * (1 - l_discount) * [SCALE]) as sum_disc
+from
+        lineitem_SampleSize_cached
+where l_shipdate<='1998-09-01'
+group by
+        l_returnflag,
+        l_linestatus;
+
+
+

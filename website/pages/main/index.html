@@ -1,0 +1,526 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+
+    <title>Analytical Bootstrap Demo</title>
+
+    <link href="jquery-ui.css" rel="stylesheet">
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="justified-nav.css" rel="stylesheet">
+	  <link href="button.css" rel="stylesheet">
+
+    <script src="../../js/jquery-1.11.0.min.js"></script>
+    <!--script src="../../js/jquery-ui-1-10-4.js"></script-->
+    <!-- load the d3.js library --> 
+    <script src="../../js/d3.v3.min.js"></script>
+    <!-- load google chart library -->
+    <!--script src="../../js/google_chart.js"></script-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+<!--
+.STYLE1 {font-size: 18px}
+.STYLE3 {
+	color: #FF0000;
+	font-style: italic;
+	font-weight: bold;
+}
+.STYLE4 {font-size: 14px}
+-->
+    </style>
+</head>
+
+  <body>
+    <div class="container">
+
+      <!-- Jumbotron -->
+      <!--div class="jumbotron">
+        <p class="lead">Title</p>
+        <p><a class="btn btn-lg btn-success" href="#" role="button">Get started today</a></p></div-->
+
+      <div class="logo">
+      </div>
+      <div class="masthead" >
+        <h1 class="text-muted" >ABS: a System for Scalable Approximate Queries </h1>
+        <ul class="nav nav-justified" style = "max-width: 960px;">
+          <li class="home-bar"><a href="#" onClick="javascript:show(1)">Home</a></li>
+          <li class="veri-bar"><a href="#" onClick="javascript:show(2)">Applicability Test</a></li>
+          <li class="abm-bar active"><a href="#" onClick="javascript:show(3)">Analytical Bootstrap</a></li>
+          <li class="close-bar"><a href="#" onClick="javascript:show(4)">Close-Form Formula</a></li>
+          <li class="vanilla-bar"><a href="#" onClick="javascript:show(5)">Standard Bootstrap</a></li>
+        </ul>
+      </div>
+
+      <!-- Home Section -->
+      <div class="row row-home">
+
+        <!-- ABS overview -->
+        <div class="col-md-10 col-sm-10">
+		      <p class="STYLE4">  &nbsp;   &nbsp;  &nbsp;</p>
+              <div class="jumbotron_b">
+                <div class="col-md-12 col-sm-12">
+      		        <font style="line-height:1.5;">
+                    <p >ABS is a parallel approximate query processing for running interactive SQL queries over massive data. It allows users to pick the desire spot in the latency-accuracy space by running the queries data samples, and presents approximate query results with accuracy guarantees.  </p>
+                    <p >ABS achieves this by exploiting the recent advance in scalable error estimation techniques -- <b>Analytical Bootstrap Method</b>, and lets the compiler automatically choose this fast method whenever possible and brings the error estimation overhead down to seconds.  </p>
+                    <p >ABS is available for Hive and Shark, and supports HiveQL. The demo is running a cluster of 15 commodity machines answering a range of queries over 100G TPC-H benchmark.  </p>
+                </font>
+                </div>
+              </div>
+        </div>
+        <!-- System overview -->
+        <div class="col-md-10 col-sm-10">
+            <h2>System Overview</h2>
+            <font style="line-height:1.5;">
+                <p class="STYLE1">ABS is available for Hive and Shark, and supports HiveQL. </p>
+            </font>
+        </div>
+        <p>&nbsp;</p>
+        <!-- System overview graph -->
+        <div class="col-md-5 col-sm-5 col-padded-top col-center">
+            <div style="margin: 30px 0px 0px 0px; display: block">
+              <img src="img/overview.png" style="width: 95%; display: block; margin-left: auto; margin-right: auto;">
+            </div>
+        </div>
+        <!-- ABS Demo -->
+        <div class="col-md-5 col-sm-5">
+          <div style="margin: 30px 0px 0px 0px; display: block">
+           <img src="img/demo.gif" alt="Abm Demo" height="240px"
+                style="display: block; margin-top:0px; margin-bottom:20px; margin-left:auto; margin-right:auto;"/>
+          </div>
+        </div>
+
+        <div class="col-md-10 col-sm-10">
+            <p>&nbsp;</p>
+            <h2>Analytical Bootstrap</h2>
+            <font style="line-height:1.5;">
+                <p class="STYLE1">Analytical Bootstrap Method (ABM) uses a probabilistic relational model for the bootstrap process that allows for automatic error quantification of a large class of SQL queries under sampling, but without performing the actual Monte Carlo simulation. In particular, using a single-round query evaluation, ABM accurately estimates the empirical distribution of the query answers that produced by hundreds or thousands of bootstrap trials on sampled database. </p>
+            </font>
+            <div style="margin: 30px 0px 0px 0px; display: block">
+              <img src="img/bs_process.png" style="width: 75%; display: block; margin-left: auto; margin-right: auto;">
+            </div>
+        </div>
+
+        <!-- Scalibility -->
+        <div class="col-md-10 col-sm-10">
+            <h2>&nbsp;</h2>
+            <h2>Scalibility</h2>
+            <font style="line-height:1.5;">
+                <p class="STYLE1"> Currently, we implement the ABS system on top of Shark, an open source distributed data warehouse which supports efficient query evaluation on massive data sets. Our evaluation on both synthetic and real-world datasets show that ABS has superior prediction accuracy for bootstrap-based quality measures, and is several orders of magnitude faster than bootstrap and previous  bootstrap implementations.
+                </p>
+            </font>
+            <p class="STYLE4">  &nbsp;   &nbsp;  &nbsp;</p>
+        </div>
+        <!-- Scalibility graph -->
+        <div class="col-md-10 col-sm-10 col-padded-top col-center"> 
+            <div style="width: 100%; max-width: 850px; display: inline-block">
+               <img src="img/performance.png" style="width: 100%; max-width: 850px;">
+            </div>
+        </div>
+      </div>	  
+		  
+      <!-- Eligibility Verification Section -->
+      <div class="row row-veri">
+        <div class="col-md-10 col-sm-10">
+		        <p class="STYLE4">  &nbsp;   &nbsp;  &nbsp;</p>
+		        <font style="line-height:1.5;">
+      	      <p class="STYLE1">Try a query your are interested in! ABS will compile the input query to a query plan explained in relational algebra, and provide a visualization of the query plan. Based on this query plan, ABS also checks whether it is eligible for applying efficient analytical bootstrap method and/or closed-form method to estimate
+		          the approximation error of the query. </p>
+		        </font>
+            <div class="col-md-7">
+            <h1><textarea class="ta_input form-control" rows="8" placeholder="Enter Query Here!" required></textarea></h1>
+            </div>
+            <div class="col-md-5 check_right">
+              <form>
+                <div class="form-group form-inline">
+                  <div class="tpchDiv">
+                    <select class="tpchMenu_input menu" onchange='javascript:fillTpch("input")'>
+                    </select>
+                  </div>
+                  <div class="percentDiv">
+                    <p>
+                      <select class="percentMenu_input menu" onchange='javascript:fillTpch("input")'>
+                      </select>
+                    </p>
+                  </div>
+                </div>
+              </form>
+              <div id="buttoncontainer">
+                <button id="imc_style" class="check_btn" style="margin-left:25px" onclick='javascript:plan()'>&nbsp; Applicability Test &nbsp;</button>
+              </div>
+            </div>
+        </div>
+        <div class="col-md-10 col-sm-10">
+            <form class="form-signin">
+              <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="tlt panel-title">Analytical Bootstrap Query Plan <div class="schema" onClick='javascript:schema()'>schema</div> </h3></div>
+                <div class="panel-body"><div class="pad"></div><div class="plan"><!--img src="sql.png" /--></div></div>
+              </div>
+            </form>
+        </div>
+
+        <div id="buttoncontainer"><button id="imc_style" class="abm_btn" onClick='javascript:show(3)'>&nbsp; Analytical Bootstrap &nbsp;</button></div>
+    		<div id="buttoncontainer"><button id="imc_style" class="close_btn" onClick='javascript:show(4)'>Close-Form Formula</button></div>
+    		<div id="buttoncontainer"><button id="imc_style" class="vanilla_btn" onClick='javascript:show(5)'>&nbsp; Standard Bootstrap &nbsp;</button></div>
+      </div>
+
+
+
+      <!-- Analytical Bootstrap Section -->
+      <div class="row row-abm">
+ 		<div class="col-md-5">
+          <form class="form-signin">
+            <h1><textarea class="ta_abm form-control" rows="10" placeholder="Enter Query Here!" required></textarea></h1>
+          </form>
+        </div>
+        <div class="col-md-5">
+          <p>&nbsp;</p>
+          <form role="form">
+            <div class="form-group form-inline">
+              <div class="checkbox">
+                <label>
+		<input  id = 'varRadio' name ='stats' type="radio" checked="checked"> Variance
+		</label>
+              </div>
+            </div>
+
+            <div class="form-group form-inline">
+              <div class="cb checkbox">
+                <label>
+		<input id = 'quantileRadio' name ='stats' type="radio" onClick="javascript:quantileCheckClick()"> Quantile 
+		</label>
+              </div>
+              	<input type="text" class="num form-control quantileBox" id="quantilePct" placeholder="5%" disabled>
+              <p></p>
+              <div class="cb checkbox">
+                <label>
+		<input id = 'confidenceRadio' name ='stats' type="radio" onClick="javascript:confidenceCheckClick()"> Confidence Interval 
+		</label>
+              </div>
+	     
+              <input type="text" class="num form-control confFrom" id="confFrom" placeholder="5%" disabled>
+              &nbsp;To&nbsp;
+              <input type="text" class="num form-control confTo" id="confTo" placeholder="95%" disabled>
+	      
+            </div>
+
+            <div class="form-group form-inline" style=" height: 30px">
+              <div class="tpchDiv">
+                <select class="tpchMenu_abm menu" onchange='javascript:fillTpch("abm")'>
+                </select>
+              </div>
+			        <div class="percentDiv">
+                <select class="percentMenu_abm menu" onchange='javascript:fillTpch("abm")'>
+                </select>
+			        </div>
+            </div>
+            
+            <div class="form-group form-inline">
+              <div class="execBtn">
+                <a class="btn btn-primary" href='javascript:execAbm()' role="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-md-10">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Evaluation Results <span><h5 class="time_abm"></h5></span>
+                <div class="schema" onClick='javascript:schema()'>schema</div>
+              </h3>
+            </div>
+            <div class="panel-body">
+              <div class="tableWrapper myTab_abm tab">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Closed Form Section -->
+      <div class="row row-close">
+        
+        <div class="col-md-5">
+          <form class="form-signin">
+            <h1><textarea class="ta_close form-control" rows="10" placeholder="Enter Query Here!" required></textarea></h1>
+          </form>
+        </div>
+
+        <div class="col-md-5"> 
+        <p>&nbsp;</p>  
+          <form role="form">
+		        <div class="form-group form-inline">
+              <div class="checkbox">
+                <label>
+                <input  id = 'varRadio2' name ='stats' type="radio" checked="checked"> Variance
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group form-inline">
+              <div class="cb checkbox">
+                <label>
+                <input id = 'quantileRadio2' name ='stats' type="radio" onClick="javascript:quantileCheckClick()"> Quantile 
+                </label>
+              </div>
+                <input type="text" class="num form-control quantileBox" id="quantilePct2" placeholder="5%" disabled>
+                <p></p>
+              <div class="cb checkbox">
+                <label>
+                <input id = 'confidenceRadio2' name ='stats' type="radio" onClick="javascript:confidenceCheckClick2()"> Confidence Interval 
+                </label>
+              </div>
+
+              <input type="text" class="num form-control confFrom" id="confFrom2" placeholder="5%" disabled>
+              &nbsp;To&nbsp;
+              <input type="text" class="num form-control confTo" id="confTo2" placeholder="95%" disabled>
+        
+            </div>
+		  
+            <div class="form-group form-inline" style=" height: 30px">
+              <div class="tpchDiv">
+                <select class="tpchMenu_close menu" onchange='javascript:fillTpch("close")'>
+                </select>
+              </div>
+              <div class="percentDiv">
+                <p>
+                  <select class="percentMenu_close menu" onchange='javascript:fillTpch("close")'>
+                  </select>
+                </p>
+              </div>
+            </div>
+            <div class="form-group form-inline" >
+              <div class="execBtn2">
+                <a class="btn btn-primary" href='javascript:execClose()' role="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+              </div>
+              <div class="compareBtn">
+                <a class="btn btn-primary" href='javascript:compare()' role="button">Compare w/ Analytical Bootstrap</a>
+              </div> 
+            </div>
+          </form>
+        </div>
+
+        <div class="col-md-10">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Evaluation Results <span><h5 class="time_close"></h5></span>
+                <div class="schema" onClick='javascript:schema()'>schema</div>
+              </h3>
+            </div>
+            <div class="panel-body">
+              <div class="tableWrapper myTab_close tab">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Vanilla Section -->
+      <div class="row row-vanilla">
+        
+        <div class="col-md-5">
+          <form class="form-signin">
+            <h1><textarea class="ta_vanilla form-control" rows="9" placeholder="Please choose a TPCH Query!" required></textarea></h1>
+          </form>
+        </div>
+
+        <div class="col-md-5">
+		
+          <p>&nbsp;</p>
+          <form role="form">
+            <div class="form-group form-inline" style="margin-top: 40px; height: 30px">
+              <div class="tpchDiv">
+                <select class="tpchMenu_vanilla menu" onchange='javascript:fillTpch("vanilla")'>
+                </select>
+              </div>
+			        <div class="percentDiv">
+                <p>
+                  <select class="percentMenu_vanilla menu" onchange='javascript:fillTpch("vanilla")'>
+                  </select>
+                </p>
+              </div>
+            </div>
+            <div class="form-group form-inline">
+              <div class="execBtn2">
+                <a class="btn btn-primary" href='javascript:execVanilla()' role="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+              </div>
+              <div class="compareBtn">
+                <a class="btn btn-primary" href='javascript:stop_interval()' role="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+              </div>
+            </div>
+            <div class="vanilla_running">
+              Running ...
+            </div>
+          </form>
+        </div>
+        <div class="col-md-10">
+          <div class="col-md-4" id="vanilla_performance_div">
+          </div>
+          <div class="col-md-8" id="vanilla_error_div">
+          </div>
+        </div>
+      </div>
+
+      <div class="graph">
+      </div>
+
+      <!-- Site footer -->
+      <div class="footer">
+        <p>&copy; WIS Lab, UCLA @2014</p>
+      </div>
+
+    </div> <!-- /container -->
+
+
+    <div id="chart_div" style="width: 450px; height: 250px; position:absolute; display:none;">
+    </div>
+    
+    <div id="column_div" style="width: 900px; height: 500px; position:absolute; display:none;"></div>
+    <div class="example_tab" style="display:none;">
+      <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>l_partkey</th>
+                      <th>revenue</th>
+                      <th>Mean-Var-1</th>
+                      <th>Mean-Var-2</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="tpchrow" href="#">
+                      <td>1</td>
+                      <td>63759</td>
+                      <td>1192143.00</td>
+                      <td class="draw" id="-3,0.004,-2,0.05,-1,0.24,0,0.39,1,0.24,2,0.05,3,0.004">0,1</td>
+                      <td class="draw" id="-3,0.4,-2,0.5,-1,2,0,15,1,2,2,0.5,3,0.4">0,5</td>
+                    </tr>
+                    <tr class="tpchrow" href="#">
+                      <td>2</td>
+                      <td>63832</td>
+                      <td>1522863.89</td>
+                      <td class="draw" id="-5,0.004,-2,0.5,-1,2.4,0,39,1,2.4,2,0.5,5,0.004">38,14.3</td>
+                      <td class="draw" id="-3,5.4,-2,14.5,-1,16,0,31,1,16,2,14.5,3,5.4">15,14.3</td>
+                    </tr>
+                  </tbody>
+      </table>
+    </div>
+    <div class="example_percent" style="display:none;">
+        <option value="nothing">Percent Select</option>
+        <option value="1">1%</option>
+        <option value="2">2%</option>
+        <option value="5">5%</option>
+        <option value="10">10%</option>
+    </div>
+
+    <div class="example_abm" style="display:none;">
+        <option value="nothing">Query Select</option>
+        <option value="q1">q1</option>
+        <option value="q3">q3</option>
+        <option value="q5">q5</option>
+        <option value="q6">q6</option>
+        <option value="q7">q7</option>
+        <option value="q8">q8</option>
+        <option value="q9">q9</option>
+        <option value="q10">q10</option>
+        <option value="q11">q11</option>
+        <option value="q12">q12</option>
+        <option value="q14">q14</option>
+        <option value="q17">q17</option>
+        <option value="q18">q18</option>
+        <option value="q19">q19</option>
+        <option value="q20">q20</option>
+    </div>
+
+    <div class="example_close" style="display:none;">
+        <option value="nothing">Query Select</option>
+        <option value="q1">q1</option>
+        <option value="q3">q3</option>
+        <option value="q5">q5</option>
+        <option value="q6">q6</option>
+        <option value="q7">q7</option>
+        <option value="q8">q8</option>
+        <option value="q9">q9</option>
+        <option value="q10">q10</option>
+        <option value="q12">q12</option>
+        <option value="q14">q14</option>
+        <option value="q19">q19</option>
+    </div>
+
+    <div class="example_vanilla" style="display:none;">
+        <option value="nothing">Query Select</option>
+        <option value="q1">q1</option>
+        <option value="q3">q3</option>
+        <option value="q5">q5</option>
+        <option value="q6">q6</option>
+        <option value="q7">q7</option>
+        <option value="q8">q8</option>
+        <option value="q9">q9</option>
+        <option value="q10">q10</option>
+        <option value="q11">q11</option>
+        <option value="q12">q12</option>
+        <option value="q14">q14</option>
+        <option value="q17">q17</option>
+        <option value="q18">q18</option>
+        <option value="q19">q19</option>
+    </div>
+
+    <div class="test_tpch" style="display:none;">
+        <option value="nothing">Query Select</option>
+        <option value="q1">q1</option>
+        <!-- NOT ABM ELIGBILE -->
+        <option value="q2">q2</option>
+        <option value="q3">q3</option>
+        <option value="q5">q5</option>
+        <option value="q6">q6</option>
+        <option value="q7">q7</option>
+        <option value="q8">q8</option>
+        <option value="q9">q9</option>
+        <option value="q10">q10</option>
+        <!-- NOT CLOSE ELIGBILE -->
+        <option value="q11">q11</option>
+        <option value="q12">q12</option>
+        <!-- NOT ABM ELIGBILE -->
+        <option value="q13">q13</option>
+        <option value="q14">q14</option>
+        <!-- NOT ABM ELIGBILE -->
+        <option value="q15">q15</option>
+        <option value="q17">q17</option>
+        <option value="q18">q18</option>
+        <option value="q19">q19</option>
+        <option value="q20">q20</option>
+        <!--option value="q4">q4</option-->
+        <!--option value="q16">q16</option-->
+    </div>
+
+    <div class="tpch_img">
+          <img src="img/tpch_schema.png" style="width: 100%;" />
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/site.js"></script>
+  </body>
+</html>

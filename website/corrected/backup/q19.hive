@@ -1,0 +1,40 @@
+set hive.abm.sampled.table = lineitem;
+
+select
+        sum(l_extendedprice * (1 - l_discount)) as revenue
+from
+        lineitem l
+        join part_cached p
+        on p.p_partkey = l.l_partkey
+where
+((
+p_brand = 'Brand#45'
+and (p_container = 'SM CASE' or p_container = 'SM BOX' or p_container = 'SM PACK' or p_container = 'SM PKG')
+and l_quantity >= 7 and l_quantity <= 7 + 10
+and p_size >= 1 and p_size <= 5
+and (l_shipmode = 'AIR' or l_shipmode = 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#51'
+and (p_container = 'MED BAG' or p_container = 'MED BOX' or p_container = 'MED PKG' or p_container = 'MED PACK')
+and l_quantity >= 20 and l_quantity <= 20 + 10
+and p_size >= 1 and p_size <= 10 
+and (l_shipmode = 'AIR' or l_shipmode = 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#51'
+and (p_container = 'LG BAG' or p_container = 'LG BOX' or p_container = 'LG PKG' or p_container = 'LG PACK')
+and l_quantity >= 28 and l_quantity <= 28 + 10
+and p_size >= 1 and p_size <= 15
+and (l_shipmode = 'AIR' or l_shipmode = 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+));
+
+
+

@@ -1,0 +1,25 @@
+set hive.abm.sampled.table = lineitem;
+
+select
+        c_nationkey,
+        sum(lineitem.l_quantity)
+from
+        lineitem
+          join
+        orders on orders.o_orderkey = lineitem.l_orderkey
+          join
+        customer on customer.c_custkey = orders.o_custkey
+          join
+        (select
+                o_orderpriority
+                from (select
+                                o_orderpriority,
+                                sum(l_quantity) as cnt
+                        from orders join lineitem on orders.o_orderkey = lineitem.l_orderkey
+                        group by o_orderpriority) sub
+                where sub.cnt > 3060250000) out
+          on orders.o_orderpriority = out.o_orderpriority
+group by c_nationkey;
+
+
+

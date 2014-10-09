@@ -1,0 +1,26 @@
+--set hive.abm = false;
+--set mapred.reduce.tasks= 112;
+
+drop table tmp11_SampleSize_cached;
+
+CREATE TABLE tmp11_SampleSize_cached AS
+SELECT tid, n_nationkey, ps_supplycost, ps_availqty
+FROM partsupp_SampleSize_cached join supplier_cached 
+	on partsupp_SampleSize_cached.ps_suppkey = supplier_cached.s_suppkey
+	join nation on supplier_cached.s_nationkey = nation.n_nationkey;
+
+--set hive.abm = true;
+--set hive.abm.sampled.table = tmp11_SampleSize_cached;
+
+select
+        n_nationkey,
+        value
+from
+        (select n_nationkey, sum(ps_supplycost * ps_availqty * [SCALE]) as value
+                from tmp11_SampleSize_cached AS
+                group by n_nationkey) sub1
+        join
+        (select sum(ps_supplycost * ps_availqty * 0.00002) as tmp_value
+                from tmp11_SampleSize_cached) sub2
+where sub1.value > sub2.tmp_value;
+

@@ -1,0 +1,18 @@
+--set hive.abm = true;
+--set mapred.reduce.tasks= 112;
+--set hive.abm.sampled.table = lineitem_SampleSize_cached;
+
+select
+        n_name,
+        sum(l_extendedprice * (1 - l_discount)  * [SCALE]) as revenue
+from
+        customer_SampleSizes_cached c
+        join orders_SampleSizes_cached o on c.c_custkey = o.o_custkey
+                and o.o_orderdate >= '1994-10-01' and o.o_orderdate < '1995-01-01'
+        join nation n on c.c_nationkey = n.n_nationkey
+        join lineitem_SampleSize_cached l on l.l_orderkey = o.o_orderkey and l.l_returnflag = 'R'
+group by
+        n_name;
+
+
+

@@ -1,0 +1,28 @@
+set hive.abm = false;
+
+CREATE TABLE tmp17_cached AS
+select ipart.p_mfgr as p_mfgr, l_quantity
+from lineitem_1 join part ipart
+on lineitem_1.l_partkey = ipart.p_partkey;
+
+set hive.abm = true;
+set hive.abm.sampled.table = lineitem_1_cached;
+set mapred.reduce.tasks = 112;
+
+select
+        sum(l_extendedprice/7.0) as avg_yearly
+from
+        lineitem_1_cached l
+          join
+        part_cached opart on opart.p_partkey = l.l_partkey
+          join
+               (select p_mfgr, avg(0.2 * l_quantity) as quant 
+                   from tmp17_cached
+                   group by p_mfgr) sub
+          on opart.p_mfgr = sub.p_mfgr
+where
+        opart.p_brand = 'Brand#42' and opart.p_container = 'JUMBO BAG' and l.l_quantity < sub.quant;
+
+drop table tmp17_cached;
+
+

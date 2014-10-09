@@ -1,0 +1,125 @@
+set hive.abm = false;
+set mapred.reduce.tasks= 112;
+
+drop table orders_10s_cached;
+drop table orders_5s_cached;
+drop table orders_2s_cached;
+drop table orders_1s_cached;
+
+drop table customer_10s_cached;
+drop table customer_5s_cached;
+drop table customer_2s_cached;
+drop table customer_1s_cached;
+
+drop table partsupp_10_cached;
+drop table partsupp_5_cached;
+drop table partsupp_2_cached;
+drop table partsupp_1_cached;
+
+drop table lineitem_1_cached;
+drop table lineitem_2_cached;
+drop table lineitem_5_cached;
+drop table lineitem_10_cached;
+
+drop table customer_1_cached;
+drop table customer_2_cached;
+drop table customer_5_cached;
+drop table customer_10_cached;
+
+drop table part_cached;
+drop table supplier_cached;
+drop table partsupp_cached;
+
+
+CREATE TABLE lineitem_1_cached AS
+SELECT *
+FROM lineitem_1;
+
+CREATE TABLE lineitem_2_cached AS
+SELECT *
+FROM lineitem_2;
+
+CREATE TABLE lineitem_5_cached AS
+SELECT *
+FROM lineitem_5;
+
+CREATE TABLE lineitem_10_cached AS
+SELECT *
+FROM lineitem_10;
+
+CREATE TABLE customer_1_cached AS
+SELECT * 
+FROM customer_1;
+
+CREATE TABLE customer_2_cached AS
+SELECT * 
+FROM customer_2;
+
+CREATE TABLE customer_5_cached AS
+SELECT * 
+FROM customer_5;
+
+CREATE TABLE customer_10_cached AS
+SELECT * 
+FROM customer_10;
+
+CREATE TABLE partsupp_1_cached AS
+SELECT * 
+FROM partsupp_1;
+
+CREATE TABLE partsupp_2_cached AS
+SELECT * 
+FROM partsupp_2;
+
+CREATE TABLE partsupp_5_cached AS
+SELECT * 
+FROM partsupp_5;
+
+CREATE TABLE partsupp_10_cached AS
+SELECT * 
+FROM partsupp_10;
+
+CREATE TABLE part_cached AS
+SELECT * 
+FROM part;
+
+CREATE TABLE supplier_cached AS
+SELECT * 
+FROM supplier;
+
+
+CREATE TABLE partsupp_cached AS
+SELECT * 
+FROM partsupp;
+
+create table orders_10s_cached as
+select * 
+from orders_10s;
+
+create table orders_5s_cached as
+select * 
+from orders_5s;
+
+create table orders_2s_cached as
+select * 
+from orders_2s;
+
+create table orders_1s_cached as
+select * 
+from orders_1s;
+
+create table customer_10s_cached as
+select * 
+from customer_10s;
+
+create table customer_5s_cached as
+select * 
+from customer_5s;
+
+create table customer_2s_cached as
+select * 
+from customer_2s;
+
+create table customer_1s_cached as
+select * 
+from customer_1s;

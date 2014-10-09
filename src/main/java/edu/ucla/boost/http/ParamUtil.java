@@ -6,8 +6,6 @@ import java.util.Map;
 
 import edu.ucla.boost.common.Log;
 import edu.ucla.boost.common.Param;
-import edu.ucla.boost.math.Confidence;
-import edu.ucla.boost.math.Quantile;
 
 public class ParamUtil {
 	
@@ -33,13 +31,6 @@ public class ParamUtil {
 		return Boolean.parseBoolean(paramMap.get(Param.QUANTILE));
 	}
 	
-	public Quantile getQuantile() {
-		return new Quantile(paramMap.get(Param.QUANTILE_VALUE));
-	}
-	
-	public Confidence getConfidence() {
-		return new Confidence(paramMap.get(Param.CONFIDENCE_FROM), paramMap.get(Param.CONFIDENCE_TO));
-	}
 	
 	/**
 	 * Return null if the format is invalid or violates some restrictions.

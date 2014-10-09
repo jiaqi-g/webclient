@@ -1,0 +1,17 @@
+--set hive.abm = true;
+--set mapred.reduce.tasks= 112;
+--set hive.abm.sampled.table = orders;
+
+select  c_count,
+        sum(1) as custdist
+from
+        (select c_custkey,
+                sum(if (o_orderkey is not null, 1, 0)) as c_count
+         from 
+                customer c left outer join orders o
+                        on c.c_custkey = o.o_custkey and not o.o_comment like '%special%requests%'
+         group by c_custkey) c_orders
+group by c_count;
+
+
+

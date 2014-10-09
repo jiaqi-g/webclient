@@ -1,0 +1,15 @@
+set hive.abm.sampled.table = lineitem;
+
+select
+        l_returnflag,
+        l_linestatus,
+        sum(l_quantity) as sum_quan
+from
+        lineitem
+where l_shipdate<='1998-09-01'
+group by
+        l_returnflag,
+        l_linestatus;
+
+
+
