@@ -49,7 +49,7 @@ public class Server extends NanoHTTPD {
 				if (uri.contains("favicon") || uri.contains("http")) {
 					return null;
 				}
-
+				
 				if (uri.contains(".js")) {
 					mbuffer = Asset.open(uri);
 					return new Response(Status.OK, Type.MIME_JS, mbuffer);
