@@ -1,36 +1,23 @@
-package edu.ucla.boost;
+package edu.ucla.boost.misc;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.util.Progressable;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * start hadoop-1.0.4 (hdfs) first before running this class
  * @author victor
  *
  */
-public class Test {
-
+public class HDFSTest {
+	
 	public static String hdfsURI = "hdfs://localhost:9000";
 	public static String filePath = "/tmp/json_plan.txt";
 	public static String hadoopHome = "/home/victor/hadoop-1.0.4/";
 	//"/s2013/batch/table.html";
 
+	@Deprecated
 	public static void writeHDFS(String out) throws IOException, URISyntaxException {
+		/*
 		Configuration configuration = new Configuration();
 		FileSystem hdfs = FileSystem.get(new URI(hdfsURI), configuration);
 		Path file = new Path(hdfsURI + filePath);
@@ -52,10 +39,13 @@ public class Test {
 		br.close();
 		hdfs.close();
 
-		System.out.println("Write finished!");
+		System.out.println("Write finished!");*/
 	}
 
+	@Deprecated
 	public static String readHDFS() {
+		return null;
+		/*
 		try {
 			Path file = new Path(hdfsURI + filePath);
 			Configuration conf = new Configuration();
@@ -68,40 +58,18 @@ public class Test {
 			String line = br.readLine();
 			while (line != null){
 				res.append(line);
-				line = br.readLine();
+				line = br.readLine()
 			}
 			return res.toString();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 
-		return null;
+		return null;*/
 	}
-
-	public static void testJson() throws JSONException {
-		JSONObject obj = new JSONObject();
-		obj.put("name", "Top Level");
-		obj.put("parent", "null");
-
-		List<JSONObject> lst = new ArrayList<JSONObject>();
-		JSONObject obj1 = new JSONObject();
-		obj1.put("name", "Top Level");
-		obj1.put("parent", "null");
-		lst.add(obj1);
-
-		JSONObject obj2 = new JSONObject();
-		obj2.put("name", "Top Level");
-		obj2.put("parent", "null");
-		lst.add(obj2);
-
-		obj.put("children", lst);
-
-		System.out.println(obj);
-	}
-
+	
 	public static void main(String[] args) throws Exception {
 		//writeHDFS("a great success!");
 		//System.out.println("Read out: " + readHDFS());
 	}
-
 }

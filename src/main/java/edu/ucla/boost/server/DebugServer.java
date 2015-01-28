@@ -1,7 +1,6 @@
 package edu.ucla.boost.server;
 
 import fi.iki.elonen.NanoHTTPD;
-import fi.iki.elonen.ServerRunner;
 
 import java.util.HashMap;
 import java.util.List;

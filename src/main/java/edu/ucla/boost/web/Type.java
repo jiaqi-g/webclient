@@ -12,5 +12,4 @@ public class Type {
 	MIME_PNG = "image/png",
 	MIME_DEFAULT_BINARY = "application/octet-stream",
 	MIME_XML = "text/xml";
-	
 }

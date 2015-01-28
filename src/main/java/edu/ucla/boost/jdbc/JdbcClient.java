@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.DriverManager;
 
-import org.apache.hadoop.hive.jdbc.HiveQueryResultSet;
-
 import edu.ucla.boost.common.Conf;
 import edu.ucla.boost.common.Log;
 
@@ -90,7 +88,7 @@ public class JdbcClient {
 		res.append("**Result:**\n");
 
 		int index = 0;
-		HiveQueryResultSet hiveRS = (HiveQueryResultSet)rs;
+		ResultSet hiveRS = (ResultSet) rs;
 		while (hiveRS.next()) {
 			//res.append();
 			//res.append(1);
