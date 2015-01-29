@@ -1,4 +1,4 @@
-package edu.ucla.boost.misc;
+package edu.ucla.wis.misc;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

@@ -1,4 +1,4 @@
-package edu.ucla.boost.server;
+package edu.ucla.wis.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -8,9 +8,9 @@ import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.Map;
 
-import edu.ucla.boost.http.ParamUtil;
-import edu.ucla.boost.http.ParameterFilter;
-import edu.ucla.boost.jdbc.JdbcClient;
+import edu.ucla.wis.http.ParamUtil;
+import edu.ucla.wis.http.ParameterFilter;
+import edu.ucla.wis.jdbc.JdbcClient;
 
 import com.sun.net.httpserver.*;
 

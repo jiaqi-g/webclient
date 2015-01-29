@@ -1,4 +1,4 @@
-package edu.ucla.boost.jdbc;
+package edu.ucla.wis.jdbc;
 
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.DriverManager;
 
-import edu.ucla.boost.common.Conf;
-import edu.ucla.boost.common.Log;
+import edu.ucla.wis.common.Conf;
+import edu.ucla.wis.common.Log;
 
 public class JdbcClient {
 	

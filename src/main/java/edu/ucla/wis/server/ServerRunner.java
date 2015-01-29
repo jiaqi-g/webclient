@@ -1,4 +1,4 @@
-package edu.ucla.boost.server;
+package edu.ucla.wis.server;
 
 import java.io.IOException;
 import fi.iki.elonen.NanoHTTPD;

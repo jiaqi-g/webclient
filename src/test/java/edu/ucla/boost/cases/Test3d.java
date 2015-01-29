@@ -4,8 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import edu.ucla.boost.test.Conf;
-import edu.ucla.boost.common.FileSystem;
-import edu.ucla.boost.jdbc.JdbcClient;
+import edu.ucla.wis.common.FileSystem;
+import edu.ucla.wis.jdbc.JdbcClient;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

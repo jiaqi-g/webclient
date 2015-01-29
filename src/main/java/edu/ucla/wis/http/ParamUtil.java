@@ -1,11 +1,11 @@
-package edu.ucla.boost.http;
+package edu.ucla.wis.http;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import edu.ucla.boost.common.Log;
-import edu.ucla.boost.common.Param;
+import edu.ucla.wis.common.Log;
+import edu.ucla.wis.common.Param;
 
 public class ParamUtil {
 	

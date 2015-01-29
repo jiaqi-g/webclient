@@ -1,4 +1,4 @@
-package edu.ucla.boost.common;
+package edu.ucla.wis.common;
 
 public class TimeUtil {
 	static long recordTime;

@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.ucla.boost.test.Conf;
-import edu.ucla.boost.common.FileSystem;
-import edu.ucla.boost.common.Log;
-import edu.ucla.boost.jdbc.JdbcClient;
+import edu.ucla.wis.common.FileSystem;
+import edu.ucla.wis.common.Log;
+import edu.ucla.wis.jdbc.JdbcClient;
 
 /**
  * Run sql script without setting up server

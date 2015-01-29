@@ -1,4 +1,4 @@
-package edu.ucla.boost.web;
+package edu.ucla.wis.web;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -6,10 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import edu.ucla.boost.common.Conf;
-import edu.ucla.boost.common.FileSystem;
-import edu.ucla.boost.common.Log;
-import edu.ucla.boost.common.Scp;
+import edu.ucla.wis.common.Conf;
+import edu.ucla.wis.common.FileSystem;
+import edu.ucla.wis.common.Log;
+import edu.ucla.wis.common.Scp;
 
 public class Asset {
 	
@@ -38,7 +38,7 @@ public class Asset {
 		return is;
 	}
 	
-	public static InputStream openDefault() {
+	public static InputStream openDefaultPage() {
 		return open(defaultPage);
 	}
 	

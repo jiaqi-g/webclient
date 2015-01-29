@@ -1,4 +1,4 @@
-package edu.ucla.boost.http;
+package edu.ucla.wis.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;

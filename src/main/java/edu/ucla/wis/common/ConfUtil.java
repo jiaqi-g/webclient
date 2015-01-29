@@ -1,4 +1,4 @@
-package edu.ucla.boost.common;
+package edu.ucla.wis.common;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;

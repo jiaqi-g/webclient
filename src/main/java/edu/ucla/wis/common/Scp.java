@@ -1,4 +1,4 @@
-package edu.ucla.boost.common;
+package edu.ucla.wis.common;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

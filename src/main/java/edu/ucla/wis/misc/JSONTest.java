@@ -1,4 +1,4 @@
-package edu.ucla.boost.misc;
+package edu.ucla.wis.misc;
 
 import java.util.ArrayList;
 import java.util.List;
