@@ -1,4 +1,4 @@
-package edu.ucla.wis;
+package edu.ucla.wis.plugins;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.StringTokenizer;
 
+import edu.ucla.wis.server.ServerRunner;
 import fi.iki.elonen.NanoHTTPD;
 
 public class SimpleWebServer extends NanoHTTPD {
